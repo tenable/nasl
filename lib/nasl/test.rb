@@ -26,7 +26,7 @@
 
 require 'test/unit'
 
-module Pedant
+module Nasl
   module Test
     def self.initialize!(args)
       # Run all tests by default.
