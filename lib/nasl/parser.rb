@@ -25,18 +25,16 @@
 ################################################################################
 
 require 'racc/parser'
-require 'lib/pedant/nasl.tab'
+require 'nasl/nasl.tab'
 
-module Pedant
-  module Nasl
-    class Parser
-      def initialize
-        @grammar = Grammar.new
-      end
+module Nasl
+  class Parser
+    def initialize
+      @grammar = Grammar.new
+    end
 
-      def parse(code)
-        @grammar.parse(code)
-      end
+    def parse(code)
+      @grammar.parse(code)
     end
   end
 end

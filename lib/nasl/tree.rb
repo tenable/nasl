@@ -27,7 +27,7 @@
 require 'builder'
 
 module Nasl
-  autoload :Parser, 'pedant/parser'
+  autoload :Parser, 'nasl/parser'
 
   ############################################################################
   # Base Classes

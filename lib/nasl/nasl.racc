@@ -24,7 +24,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-class Pedant::Nasl::Grammar
+class Nasl::Grammar
 
 preclow
   right ASS_EQ ADD_EQ SUB_EQ MUL_EQ DIV_EQ MOD_EQ SLL_EQ SRA_EQ SRL_EQ
@@ -432,19 +432,19 @@ end
 
 ---- header ----
 
-require 'lib/pedant/nasl.rex'
-require 'lib/pedant/nasl'
+require 'nasl/nasl.rex'
+require 'nasl/tree'
 
 ---- inner ----
 
 # Generates nodes.
 def n(cls, *args)
-  Pedant::Nasl.const_get(cls).new(@tree, *args)
+  Nasl.const_get(cls).new(@tree, *args)
 end
 
 # Create a parse tree.
 def parse(code)
-  @tree = Pedant::Nasl::Tree.new
+  @tree = Nasl::Tree.new
   @tree << scan_str(code)
   @tree.flatten!
 
