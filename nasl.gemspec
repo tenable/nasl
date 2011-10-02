@@ -5,11 +5,10 @@ require "nasl/version"
 Gem::Specification.new do |s|
   s.name        = "nasl"
   s.version     = Nasl::VERSION
-  s.authors     = ["Stefan Penner"]
-  s.email       = ["stefan.penner@gmail.com"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.authors     = ["Mak Kolybabi"]
+  s.email       = ["mak@kolybabi.com"]
+  s.homepage    = "http://github.com/mogigoma/nasl"
+  s.summary     = %q{A static analysis framework for NASL.}
 
   s.rubyforge_project = "nasl"
 
