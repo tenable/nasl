@@ -24,29 +24,52 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+require 'nasl/tokenizer'
 
-module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
+class TestTokenizerInteger < Test::Unit::TestCase
+  def exhaustive(base, type, prefix="")
+    # Test all 16-bit integers.
+    0.upto(2 ** 16 - 1) do |integer|
+      tkz = Nasl::Tokenizer.new("#{prefix}#{integer.to_s(base)}")
+      assert_nothing_raised(Nasl::TokenException) { tkz.get_token }
+      assert_equal(type, tkz.reset.get_token.first)
+    end
   end
 
-  def self.lib
-    root + 'lib'
+  def test_bad_hex
+    "g".upto("z") do |digit|
+      [:downcase, :upcase].each do |type|
+        tkz = Nasl::Tokenizer.new("0x#{digit}".send(type))
+        assert_raise(Nasl::TokenException) { tkz.get_token }
+      end
+    end
   end
 
-  def self.test
-    root + 'test'
+  def test_bad_octal
+    8.upto(9) do |digit|
+      tkz = Nasl::Tokenizer.new("0#{digit}")
+      assert_raise(Nasl::TokenException) { tkz.get_token }
+    end
   end
 
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
+  def test_bad_decimal
+    1.upto(9) do |digit|
+      "a".upto("z") do |letter|
+        tkz = Nasl::Tokenizer.new("#{digit}#{letter}")
+        assert_raise(Nasl::TokenException) { tkz.get_token }
+      end
+    end
+  end
+
+  def test_exhaustive_hex
+    exhaustive(16, :INT_HEX, "0x")
+  end
+
+  def test_exhaustive_octal
+    exhaustive(8, :INT_OCT, "0")
+  end
+
+  def test_exhaustive_decimal
+    exhaustive(10, :INT_DEC)
+  end
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

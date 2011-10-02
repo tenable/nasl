@@ -24,29 +24,23 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+class TestString < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
+  def test_empty
+    pass(%q|z = '';|);
+    pass(%q|z = "";|);
   end
 
-  def self.lib
-    root + 'lib'
+  def test_escapes
+    pass(%q|z = '\\'';|);
+    pass(%q|z = '\\\\';|);
+    pass(%q|z = "\\";|);
+    pass(%q|z = "\\\\";|);
   end
 
-  def self.test
-    root + 'test'
+  def test_newlines
+    pass(%Q|z = 'foo\nbar';|);
+    pass(%Q|z = "foo\nbar";|);
   end
-
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

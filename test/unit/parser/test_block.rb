@@ -24,29 +24,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+class TestBlock < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
+  def test_empty
+    same("{}", "<tree><block></block></tree>")
+    same("{;}", "<tree><block><empty/></block></tree>")
+    same("{\n#\n}", "<tree><block></block></tree>")
   end
-
-  def self.lib
-    root + 'lib'
-  end
-
-  def self.test
-    root + 'test'
-  end
-
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

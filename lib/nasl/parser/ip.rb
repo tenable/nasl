@@ -24,29 +24,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+require 'nasl/parser/node'
 
 module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
-  end
+  class Ip < Node
+    attr_reader :octets
 
-  def self.lib
-    root + 'lib'
-  end
+    def initialize(tree, *tokens)
+      super
 
-  def self.test
-    root + 'test'
-  end
+      @octets = [@tokens[0], @tokens[2], @tokens[4], @tokens[6]]
+    end
 
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
+    def to_xml(xml)
+      xml.ip(:octets=>@octets.join('.'))
+    end
+  end
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

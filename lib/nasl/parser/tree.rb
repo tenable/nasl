@@ -24,29 +24,34 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+require 'builder'
 
 module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
-  end
+  class Tree < Array
+    def all(cls)
+      (@all[Nasl.const_get(cls).to_s] ||= [])
+    end
 
-  def self.lib
-    root + 'lib'
-  end
+    def register(node)
+      (@all[node.class.name] ||= []) << node
+    end
 
-  def self.test
-    root + 'test'
-  end
+    def initialize
+      @all = {}
+    end
 
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
+    def to_s
+      text = ''
+
+      xml = Builder::XmlMarkup.new(:target=>text, :indent=>2)
+
+      if empty?
+        xml.tree
+      else
+        xml.tree { self.map { |node| node.to_xml(xml) } }
+      end
+
+      text
+    end
+  end
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

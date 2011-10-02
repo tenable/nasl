@@ -24,29 +24,42 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+class TestConstant < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
+  def test_false
+    diff(
+      "z = FALSE;",
+      '<tree><assignment><op>=</op><lvalue><identifier name="z"/></lvalue><identifier name="FALSE"/></assignment></tree>'
+    )
+
+    same(
+      "z = FALSE;",
+      '<tree><assignment><op>=</op><lvalue><identifier name="z"/></lvalue><false/></assignment></tree>'
+    )
   end
 
-  def self.lib
-    root + 'lib'
+  def test_null
+    diff(
+      "z = NULL;",
+      '<tree><assignment><op>=</op><lvalue><identifier name="z"/></lvalue><identifier name="NULL"/></assignment></tree>'
+    )
+
+    same(
+      "z = NULL;",
+      '<tree><assignment><op>=</op><lvalue><identifier name="z"/></lvalue><null/></assignment></tree>'
+    )
   end
 
-  def self.test
-    root + 'test'
-  end
+  def test_true
+    diff(
+      "z = TRUE;",
+      '<tree><assignment><op>=</op><lvalue><identifier name="z"/></lvalue><identifier name="TRUE"/></assignment></tree>'
+    )
 
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
+    same(
+      "z = TRUE;",
+      '<tree><assignment><op>=</op><lvalue><identifier name="z"/></lvalue><true/></assignment></tree>'
+    )
+  end
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

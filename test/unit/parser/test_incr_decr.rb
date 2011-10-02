@@ -24,29 +24,28 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+class TestIncrDecr < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
+  def test_parentheses
+    fail_parse('q()++;');
+
+    pass('q++;');
+    pass('q[1]++;');
+    pass('q[1][2]++;');
+    pass('q[1][3]++;');
+
+    pass('++q;');
+    pass('++q[1];');
+    pass('++q[1][2];');
+    pass('++q[1][3];');
+
+    pass('q["a"]++;');
+    pass('q["a"]["b"]++;');
+    pass('q["a"]["b"]["c"]++;');
+
+    pass('++q["a"];');
+    pass('++q["a"]["b"];');
+    pass('++q["a"]["b"]["c"];');
   end
-
-  def self.lib
-    root + 'lib'
-  end
-
-  def self.test
-    root + 'test'
-  end
-
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

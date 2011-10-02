@@ -1,4 +1,4 @@
-################################################################################
+###############################################################################
 # Copyright (c) 2011, Mak Kolybabi
 # All rights reserved.
 #
@@ -24,29 +24,32 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+require 'rainbow'
 
 module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
-  end
+  class CommandParse < Command
+    def self.binding
+      'parse'
+    end
 
-  def self.lib
-    root + 'lib'
-  end
+    def self.analyze(cfg, path, args)
+      begin
+        contents = File.open(path, "rb").read
+      rescue
+        puts '[' + 'VOID'.color(:magenta) + "] #{path}"
+        return
+      end
 
-  def self.test
-    root + 'test'
-  end
+      begin
+        Parser.new.parse(contents, true)
+      rescue Exception => e
+        puts '[' + 'FAIL'.color(:red) + "] #{path}"
+        puts e.message
+        puts e.backtrace
+        return
+      end
 
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
+      puts '[' + 'PASS'.color(:green) + "] #{path}"
+    end
+  end
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

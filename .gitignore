@@ -1,7 +1,9 @@
+# Ruby gems files.
 *.gem
 .bundle
 Gemfile.lock
 pkg/*
 
+# Generated files.
 *.rex.rb
 *.tab.rb

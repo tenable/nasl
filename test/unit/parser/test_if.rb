@@ -24,29 +24,62 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+class TestIf < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
+  def test_number
+    pass(%q|if (-1);|)
+    pass(%q|if (0);|)
+    pass(%q|if (1);|)
   end
 
-  def self.lib
-    root + 'lib'
+  def test_assigment
+    pass(%q|if (q = 1);|)
   end
 
-  def self.test
-    root + 'test'
+  def test_call
+    pass(%q|if (foo());|)
   end
 
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
+  def test_constant
+    pass(%q|if (FALSE);|)
+    pass(%q|if (NULL);|)
+    pass(%q|if (TRUE);|)
+  end
+
+  def test_string
+    pass(%q|if ('');|)
+    pass(%q|if ('foo');|)
+    pass(%q|if ("");|)
+    pass(%q|if ("foo");|)
+  end
+
+  def test_simple
+    pass(%q|if (1);|)
+    pass(%q|if (1) foo();|)
+  end
+
+  def test_compound
+    pass(%q|if (1) {}|)
+    pass(%q|if (1) {foo();}|)
+  end
+
+  def test_nested
+    pass(%q|if (1) if (1) foo();|)
+    pass(%q|if (1) if (1) {foo();}|)
+  end
+
+  def test_dangling
+    # This is the correct way to parse the ambiguity presented by the dangling
+    # else problem. The else should be attached to the nearest unterminated If.
+    same(
+      %q|if (1) if (1) foo(); else bar();|,
+      '<tree><if><integer value="1"/><if><integer value="1"/><call><identifier name="foo"/></call><call><identifier name="bar"/></call></if></if></tree>'
+    )
+
+    diff(
+      %q|if (1) if (1) foo(); else bar();|,
+      '<tree><if><integer value="1"/><if><integer value="1"/><call><identifier name="foo"/></call></if><call><identifier name="bar"/></call></if></tree>'
+    )
+  end
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

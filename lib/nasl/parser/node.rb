@@ -24,67 +24,62 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/parser'
-require 'test/unit'
-
 module Nasl
-  module Test
-    def self.initialize!(args)
-      # Run all tests by default.
-      args = ['unit/*'] if args.empty?
+  class Node
+    attr_reader :tokens
 
-      # Run each test or category of tests specified on the command line.
-      args.each do |test|
-        Dir.glob(Nasl.test + (test + '.rb')).each { |f| load(f) }
+    def self.all
+      (Node.nodes[self.to_s] ||= [])
+    end
+
+    def self.nodes
+      (@_nodes ||= {})
+    end
+
+    def initialize(tree, *tokens)
+      # Register new node globally, in this module.
+      Node.nodes[self.class.name] ||= []
+      Node.nodes[self.class.name] << self
+
+      # Register new node locally, in the tree.
+      tree.register(self)
+
+      # Create the attributes array which is used for converting the parse tree
+      # to XML.
+      @attributes = []
+
+      # Store all of the tokens that made up this node.
+      @tokens = tokens
+    end
+
+    def to_xml(xml)
+      # Mangle the class name into something more appropriate for XML.
+      name = self.class.name.split('::').last
+      name = name.gsub(/(.)([A-Z])/, '\1_\2').downcase
+
+      # If there are no attributes, make a modified opening tag.
+      return xml.tag!(name) if @attributes.empty?
+
+      # Create the tag representing this node.
+      xml.tag!(name) do
+        @attributes.each do |name|
+          # Retrieve the object that the symbol indicates.
+          obj = self.send(name)
+
+          # Skip over unused attributes.
+          next if obj.nil?
+
+          # Handle objects that are arrays holding nodes, or basic types that
+          # aren't nodes.
+          if obj.is_a? Array
+            obj.each { |node| node.to_xml(xml) }
+          elsif obj.is_a? Node
+            obj.to_xml(xml)
+          else
+            xml.tag!(name, obj.to_s)
+          end
+        end
       end
-    end
-
-    def flatten(tree)
-      tree.chomp.split(/\n/).map(&:strip).join
-    end
-
-    def parse(code)
-      begin
-        tree = Nasl::Parser.new.parse(code)
-        msg = ''
-      rescue Racc::ParseError => e
-        tree = nil
-        msg = e
-      end
-
-      return tree, msg
-    end
-
-    def fail(code)
-      tree, msg = parse(code)
-
-      assert_nil(tree, msg)
-    end
-
-    def fail_parse(code)
-      assert_raise(ParseException) { Nasl::Parser.new.parse(code) }
-    end
-
-    def fail_token(code)
-      assert_raise(TokenException) { Nasl::Parser.new.parse(code) }
-    end
-
-    def pass(code)
-      tree, msg = parse(code)
-
-      assert_not_nil(tree, msg)
-    end
-
-    def diff(code, kg_tree)
-      tree, msg = parse(code)
-      assert_not_nil(tree, msg)
-      assert_not_equal(flatten(kg_tree), flatten(tree.to_s)) if !tree.nil?
-    end
-
-    def same(code, kg_tree)
-      tree, msg = parse(code)
-      assert_not_nil(tree, msg)
-      assert_equal(flatten(kg_tree), flatten(tree.to_s)) if !tree.nil?
     end
   end
 end

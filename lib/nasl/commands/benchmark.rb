@@ -1,4 +1,4 @@
-################################################################################
+###############################################################################
 # Copyright (c) 2011, Mak Kolybabi
 # All rights reserved.
 #
@@ -24,29 +24,32 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+require 'benchmark'
 
 module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
-  end
+  class CommandBenchmark < Command
+    def self.binding
+      'benchmark'
+    end
 
-  def self.lib
-    root + 'lib'
-  end
+    def self.analyze(cfg, path, args)
+      puts banner(path.basename)
 
-  def self.test
-    root + 'test'
-  end
+      Benchmark.bmbm do |b|
+        # Read in the file outside of the benchmark, to avoid contaminating it
+        # with filesystem operations.
+        contents = File.open(path, "rb").read
 
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
+        b.report("Tokenize") do
+          cfg[:iterations].times { Tokenizer.new(contents).get_all }
+        end
+
+        #b.report("Parse") do
+        #  cfg[:iterations].times { Parser.new.parse(contents) }
+        #end
+      end
+
+      puts banner(path.basename)
+    end
+  end
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

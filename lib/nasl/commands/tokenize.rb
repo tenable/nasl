@@ -1,4 +1,4 @@
-################################################################################
+###############################################################################
 # Copyright (c) 2011, Mak Kolybabi
 # All rights reserved.
 #
@@ -24,29 +24,25 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+require 'ap'
 
 module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
-  end
+  class CommandTokenize < Command
+    def self.binding
+      'tokenize'
+    end
 
-  def self.lib
-    root + 'lib'
-  end
+    def self.analyze(cfg, path, args)
+      contents = File.open(path, "rb").read
 
-  def self.test
-    root + 'test'
+      begin
+        Tokenizer.new(contents).get_tokens
+      rescue TokenException => e
+        puts "The tokenizer raised the following exceptions when processing #{path}:"
+        puts e.message
+        puts e.backtrace
+        puts
+      end
+    end
   end
-
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

@@ -24,29 +24,34 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+class TestExpressions < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
+  def test_parentheses
+    pass("q = (-a);")
+    pass("q = (~a);")
+    pass("q = (a);")
+    pass("q = (a + b);")
+    pass("q = (a + (b + c));")
+    pass("q = ((a + b) + (b + d));")
+    pass("q = (a + b) == c;")
+    pass("q = (a + b) == (c + d);")
+    pass("q = ((a + b) == (c + d));")
+    pass("q = (a + b) >> c;")
+    pass("q = (a + b) >> (c + d);")
+    pass("q = ((a + b) >> (c + d));")
+    pass("q = (((1)));")
+    pass("q = (((a = b)));")
   end
 
-  def self.lib
-    root + 'lib'
+  def test_bitwise
+    pass("q = 0 | 1;")
   end
 
-  def self.test
-    root + 'test'
+  def test_precedence
+    same(
+      'q = a + b / c + d;',
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><expression><op>+</op><expression><op>+</op><lvalue><identifier name="a"/></lvalue><expression><op>/</op><lvalue><identifier name="b"/></lvalue><lvalue><identifier name="c"/></lvalue></expression></expression><lvalue><identifier name="d"/></lvalue></expression></assignment></tree>'
+    )
   end
-
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

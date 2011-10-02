@@ -24,29 +24,30 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+require 'nasl/tokenizer'
 
-module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
+class TestTokenizerEmpty < Test::Unit::TestCase
+  def test_nothing
+    tkz = Nasl::Tokenizer.new("")
+    type, tok = tkz.get_token
+    assert_equal(false, type)
+    assert_equal(:EOF, tok.type)
+    assert_equal("$", tok.body)
   end
 
-  def self.lib
-    root + 'lib'
+  def test_whitespace
+    tkz = Nasl::Tokenizer.new("\n")
+    type, tok = tkz.get_token
+    assert_equal(false, type)
+    assert_equal(:EOF, tok.type)
+    assert_equal("$", tok.body)
   end
 
-  def self.test
-    root + 'test'
+  def test_comments
+    tkz = Nasl::Tokenizer.new("#")
+    type, tok = tkz.get_token
+    assert_equal(false, type)
+    assert_equal(:EOF, tok.type)
+    assert_equal("$", tok.body)
   end
-
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

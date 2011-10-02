@@ -25,16 +25,19 @@
 ################################################################################
 
 require 'racc/parser'
-require 'nasl/nasl.tab'
+require 'nasl/grammar.tab'
 
 module Nasl
+  class ParseException < Exception
+  end
+
   class Parser
     def initialize
       @grammar = Grammar.new
     end
 
-    def parse(code)
-      @grammar.parse(code)
+    def parse(code, test=false)
+      @grammar.parse(code, test)
     end
   end
 end

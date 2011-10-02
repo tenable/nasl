@@ -24,29 +24,27 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+require 'nasl/parser/node'
 
 module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
-  end
+  class Argument < Node
+    attr_reader :expr, :name, :type
 
-  def self.lib
-    root + 'lib'
-  end
+    def initialize(tree, *tokens)
+      super
 
-  def self.test
-    root + 'test'
-  end
+      if @tokens.length == 3
+        @name = @tokens.first
+        @expr = @tokens.last
+        @type = :named
+      else
+        @name = nil
+        @expr = @tokens.first
+        @type = :anonymous
+      end
 
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
+      @attributes << :name
+      @attributes << :expr
+    end
+  end
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

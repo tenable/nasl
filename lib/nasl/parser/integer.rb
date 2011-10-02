@@ -24,29 +24,47 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+require 'nasl/parser/node'
 
 module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
-  end
+  class Integer < Node
+    attr_reader :base, :value
 
-  def self.lib
-    root + 'lib'
-  end
+    def initialize(tree, *tokens)
+      super
 
-  def self.test
-    root + 'test'
-  end
+      @base = case @tokens.first.type
+              when :INT_DEC
+                10
+              when :INT_HEX
+                16
+              when :INT_OCT
+                8
+              when :FALSE
+                10
+              when :TRUE
+                10
+              end
 
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
+      @value = case @tokens.first.type
+               when :FALSE
+                 0
+               when :TRUE
+                 1
+               else
+                 @tokens.first.body.to_i(@base)
+               end
+    end
+
+    def to_xml(xml)
+      case @tokens.first.type
+      when :FALSE
+        xml.false
+      when :TRUE
+        xml.true
+      else
+        xml.integer(:value=>@value)
+      end
+    end
+  end
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)

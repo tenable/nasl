@@ -24,29 +24,33 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+class TestWhitespace < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
+  def test_comment
+    pass("#")
+    pass(" #")
+    pass("##")
+    pass("# foo\n# bar")
   end
 
-  def self.lib
-    root + 'lib'
-  end
+  def test_if
+    # Single statement IF with whitespace.
+    fail_parse("if ();")
+    fail_parse("if (1)")
 
-  def self.test
-    root + 'test'
-  end
+    pass("if(1);")
+    pass("if (1) ;")
 
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
+    # Block IF with whitespace.
+    fail_parse("if(){}")
+
+    pass("if(1){}")
+    pass("if(1){}")
+    pass("if (1) {}")
+    pass("if (1) {;}")
+    pass("if (1) {;;}")
+    pass("if (1)\n{\n}\n")
+  end
 end
 
-$LOAD_PATH.unshift(Nasl.lib.to_s)

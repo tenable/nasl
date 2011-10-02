@@ -24,29 +24,59 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/version'
-require 'pathname'
+class TestFunction < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  def self.root
-    @root ||= Pathname.new('').expand_path
+  def test_keyword_prefix
+    # While we never want to have a function with the same name as a keyword,
+    # having a keyword at the start of a function name is perfectly valid.
+    fail_parse("if();")
+    fail_parse("break();")
+    fail_parse("continue();")
+    fail_parse("else();")
+    fail_parse("export();")
+    fail_parse("for();")
+    fail_parse("foreach();")
+    fail_parse("function();")
+    fail_parse("global_var();")
+    fail_parse("if();")
+    fail_parse("import();")
+    fail_parse("include();")
+    fail_parse("local_var();")
+    fail_parse("repeat();")
+    fail_parse("return();")
+    fail_parse("until();")
+    fail_parse("while();")
+
+    # While we never want to have a function with the same name as a constant,
+    # having a constant at the start of a function name is perfectly valid.
+    fail_parse("FALSE();")
+    fail_parse("NULL();")
+    fail_parse("TRUE();")
+
+    # X is an exception. It is a valid function name, despite being a keyword.
+    pass("x();")
+
+    pass("if_();")
+    pass("break_();")
+    pass("continue_();")
+    pass("else_();")
+    pass("export_();")
+    pass("for_();")
+    pass("foreach_();")
+    pass("function_();")
+    pass("global_var_();")
+    pass("if_();")
+    pass("import_();")
+    pass("include_();")
+    pass("local_var_();")
+    pass("repeat_();")
+    pass("return_();")
+    pass("until_();")
+    pass("while_();")
+
+    pass("FALSE_();")
+    pass("NULL_();")
+    pass("TRUE_();")
   end
-
-  def self.lib
-    root + 'lib'
-  end
-
-  def self.test
-    root + 'test'
-  end
-
-  autoload :Cli,       'nasl/cli'
-  autoload :Command,   'nasl/command'
-  autoload :Context,   'nasl/context'
-  autoload :Parser,    'nasl/parser'
-  autoload :Token,     'nasl/token'
-  autoload :Tokenizer, 'nasl/tokenizer'
-  autoload :Test,      'nasl/test'
 end
-
-$LOAD_PATH.unshift(Nasl.lib.to_s)
