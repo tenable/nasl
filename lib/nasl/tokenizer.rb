@@ -127,7 +127,7 @@ module Nasl
       @@initialized = true
     end
 
-    def initialize(code)
+    def initialize(code, path)
       @code = code
 
       # Perform one-time initialization of tokenizer data structures.
@@ -135,7 +135,7 @@ module Nasl
 
       # Create a context object that will be shared amongst all tokens for this
       # code.
-      @ctx = Context.new(@code)
+      @ctx = Context.new(@code, path)
 
       reset
     end

@@ -28,8 +28,9 @@ require 'rainbow'
 
 module Nasl
   class Context
-    def initialize(code)
+    def initialize(code, path)
       @code = code
+      @path = path
 
       # Find all of the newlines in the source code.
       i = 0
@@ -75,7 +76,7 @@ module Nasl
       point = inner.begin
 
       # Create the location header.
-      ctx << "Context for row #{row(point)}, column #{col(point)}:\n" if header
+      ctx << "Context for row #{row(point)}, column #{col(point)} in file #@path:\n" if header
 
       # Create the text to the left of the region. The only case where there is
       # no text to the left is at the start of the program.

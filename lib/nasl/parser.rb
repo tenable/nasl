@@ -38,8 +38,8 @@ module Nasl
       @env = Tree.new
     end
 
-    def parse(code)
-      @grammar.parse(@env, code)
+    def parse(code, path="(unknown)")
+      @grammar.parse(@env, code, path)
     end
   end
 end

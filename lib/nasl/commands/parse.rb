@@ -41,7 +41,7 @@ module Nasl
       end
 
       begin
-        Parser.new.parse(contents)
+        Parser.new.parse(contents, path)
       rescue Exception => e
         puts '[' + 'FAIL'.color(:red) + "] #{path}"
         puts e.message
