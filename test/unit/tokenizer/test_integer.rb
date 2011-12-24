@@ -45,13 +45,6 @@ class TestTokenizerInteger < Test::Unit::TestCase
     end
   end
 
-  def test_bad_octal
-    8.upto(9) do |digit|
-      tkz = tokenize("0#{digit}")
-      assert_raise(Nasl::TokenException) { tkz.get_token }
-    end
-  end
-
   def test_bad_decimal
     1.upto(9) do |digit|
       "a".upto("z") do |letter|
