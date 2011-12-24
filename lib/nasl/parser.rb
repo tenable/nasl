@@ -26,6 +26,7 @@
 
 require 'racc/parser'
 require 'nasl/grammar.tab'
+require 'nasl/parser/tree'
 
 module Nasl
   class ParseException < Exception
@@ -34,10 +35,11 @@ module Nasl
   class Parser
     def initialize
       @grammar = Grammar.new
+      @env = Tree.new
     end
 
-    def parse(code, test=false)
-      @grammar.parse(code, test)
+    def parse(code)
+      @grammar.parse(@env, code)
     end
   end
 end

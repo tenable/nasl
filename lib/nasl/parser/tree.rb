@@ -34,9 +34,11 @@ module Nasl
 
     def register(node)
       (@all[node.class.name] ||= []) << node
+      @parent.register(node) unless @parent.nil?
     end
 
-    def initialize
+    def initialize(parent=nil)
+      @parent = parent
       @all = {}
     end
 

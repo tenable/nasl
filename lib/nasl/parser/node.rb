@@ -28,20 +28,8 @@ module Nasl
   class Node
     attr_reader :tokens
 
-    def self.all
-      (Node.nodes[self.to_s] ||= [])
-    end
-
-    def self.nodes
-      (@_nodes ||= {})
-    end
-
     def initialize(tree, *tokens)
-      # Register new node globally, in this module.
-      Node.nodes[self.class.name] ||= []
-      Node.nodes[self.class.name] << self
-
-      # Register new node locally, in the tree.
+      # Register new node in the tree.
       tree.register(self)
 
       # Create the attributes array which is used for converting the parse tree
