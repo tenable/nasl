@@ -24,18 +24,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/tokenizer'
-
 class TestTokenizerString < Test::Unit::TestCase
+  include Nasl::Test
+
   def test_empty
     # Tokenize empty single-quoted string.
-    tkz = Nasl::Tokenizer.new(%q|''|)
+    tkz = tokenize(%q|''|)
     type, tok = tkz.get_token
     assert_equal(:DATA, type)
     assert_equal("", tok.body)
 
     # Tokenize empty double-quoted string.
-    tkz = Nasl::Tokenizer.new(%q|""|)
+    tkz = tokenize(%q|""|)
     type, tok = tkz.get_token
     assert_equal(:STRING, type)
     assert_equal("", tok.body)
@@ -45,19 +45,19 @@ class TestTokenizerString < Test::Unit::TestCase
     # Tokenize single-quoted string with trailing escape character. This should
     # raise an exception single-quoted strings allow escape sequences, including
     # escaping single quotes.
-    tkz = Nasl::Tokenizer.new(%q|'\\'|)
+    tkz = tokenize(%q|'\\'|)
     assert_raise(Nasl::TokenException) { tkz.get_token }
 
     # Tokenize double-quoted string with trailing escape character. This should
     # not raise an exception since double-quoted strings do not allow escape
     # sequences.
-    tkz = Nasl::Tokenizer.new(%q|"\\"|)
+    tkz = tokenize(%q|"\\"|)
     assert_nothing_raised(Nasl::TokenException) { tkz.get_token }
   end
 
   def test_multiple_escapes
     1.upto(10) do |i|
-      tkz = Nasl::Tokenizer.new("'" + ("\\" * i) + "'")
+      tkz = tokenize("'" + ("\\" * i) + "'")
 
       # If there are an even number of escape sequences, then each one is
       # 'stuffed' so it is a valid single-quoted string.
@@ -67,28 +67,28 @@ class TestTokenizerString < Test::Unit::TestCase
 
     1.upto(10) do |i|
       # Any number of repeated escape sequences is fine, since they're ignored.
-      tkz = Nasl::Tokenizer.new('"' + ("\\" * i) + '"')
+      tkz = tokenize('"' + ("\\" * i) + '"')
       assert_nothing_raised(Nasl::TokenException) { tkz.get_token }
     end
   end
 
   def test_missing_quote
     # Tokenize unterminated single-quoted string.
-    tkz = Nasl::Tokenizer.new(%q|'|)
+    tkz = tokenize(%q|'|)
     assert_raise(Nasl::TokenException) { tkz.get_token }
 
     # Tokenize unterminated double-quoted string.
-    tkz = Nasl::Tokenizer.new(%q|"|)
+    tkz = tokenize(%q|"|)
     assert_raise(Nasl::TokenException) { tkz.get_token }
   end
 
   def test_multiline
     # Tokenize multiline single-quoted string.
-    tkz = Nasl::Tokenizer.new(%q|'\n.\n.\n'|)
+    tkz = tokenize(%q|'\n.\n.\n'|)
     assert_nothing_raised(Nasl::TokenException) { tkz.get_token }
 
     # Tokenize multiline double-quoted string.
-    tkz = Nasl::Tokenizer.new(%q|"\n.\n.\n"|)
+    tkz = tokenize(%q|"\n.\n.\n"|)
     assert_nothing_raised(Nasl::TokenException) { tkz.get_token }
   end
 end

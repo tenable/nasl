@@ -24,9 +24,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/context'
-
 class TestContext < Test::Unit::TestCase
+  include Nasl::Test
+
   # Five is the minimum needed to check all cases (first, after first, middle,
   # before end, end), so do double that for peace of mind.
   @@cols = 5 * 2
@@ -49,7 +49,7 @@ class TestContext < Test::Unit::TestCase
       code = grid(pos)
 
       # Create a context object with our test grid.
-      ctx = Nasl::Context.new(code)
+      ctx = context(code)
 
       # Find the column for the current position.
       res = ctx.col(pos)
@@ -68,7 +68,7 @@ class TestContext < Test::Unit::TestCase
       code = grid(pos)
 
       # Create a context object with our test grid.
-      ctx = Nasl::Context.new(code)
+      ctx = context(code)
 
       # Find the column for the current position.
       res = ctx.col(pos)
@@ -88,7 +88,7 @@ class TestContext < Test::Unit::TestCase
         code = grid(pos)
 
         # Create a context object with our test grid.
-        ctx = Nasl::Context.new(code)
+        ctx = context(code)
 
         # Find the column for the current position.
         res = ctx.col(pos)
@@ -108,7 +108,7 @@ class TestContext < Test::Unit::TestCase
       code = grid(pos)
 
       # Create a context object with our test grid.
-      ctx = Nasl::Context.new(code)
+      ctx = context(code)
 
       # Find the row for the current position.
       res = ctx.row(pos)
@@ -127,7 +127,7 @@ class TestContext < Test::Unit::TestCase
       code = grid(pos)
 
       # Create a context object with our test grid.
-      ctx = Nasl::Context.new(code)
+      ctx = context(code)
 
       # Find the row for the current position.
       res = ctx.row(pos)
@@ -147,7 +147,7 @@ class TestContext < Test::Unit::TestCase
         code = grid(pos)
 
         # Create a context object with our test grid.
-        ctx = Nasl::Context.new(code)
+        ctx = context(code)
 
         # Find the column for the current position.
         res = ctx.row(pos)
@@ -167,7 +167,7 @@ class TestContext < Test::Unit::TestCase
       code = grid(pos)
 
       # Create a context object with our test grid.
-      ctx = Nasl::Context.new(code)
+      ctx = context(code)
 
       # Find the default context for the current position.
       res = ctx.context(pos..pos + 1, nil, false, false)
@@ -186,7 +186,7 @@ class TestContext < Test::Unit::TestCase
       code = grid(pos)
 
       # Create a context object with our test grid.
-      ctx = Nasl::Context.new(code)
+      ctx = context(code)
 
       # Find the default context for the current position.
       res = ctx.context(pos..pos + 1, nil, false, false)
@@ -206,7 +206,7 @@ class TestContext < Test::Unit::TestCase
         code = grid(pos)
 
         # Create a context object with our test grid.
-        ctx = Nasl::Context.new(code)
+        ctx = context(code)
 
         # Find the default context for the current position.
         res = ctx.context(pos..pos + 1, nil, false, false)
@@ -227,7 +227,7 @@ class TestContext < Test::Unit::TestCase
         code = grid(pos)
 
         # Create a context object with our test grid.
-        ctx = Nasl::Context.new(code)
+        ctx = context(code)
 
         # Find the full context for the current position.
         res = ctx.context(pos..pos + 1, 0..-1, false, false)

@@ -24,11 +24,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/tokenizer'
-
 class TestTokenizerEmpty < Test::Unit::TestCase
+  include Nasl::Test
+
   def test_nothing
-    tkz = Nasl::Tokenizer.new("")
+    tkz = tokenize("")
     type, tok = tkz.get_token
     assert_equal(false, type)
     assert_equal(:EOF, tok.type)
@@ -36,7 +36,7 @@ class TestTokenizerEmpty < Test::Unit::TestCase
   end
 
   def test_whitespace
-    tkz = Nasl::Tokenizer.new("\n")
+    tkz = tokenize("\n")
     type, tok = tkz.get_token
     assert_equal(false, type)
     assert_equal(:EOF, tok.type)
@@ -44,7 +44,7 @@ class TestTokenizerEmpty < Test::Unit::TestCase
   end
 
   def test_comments
-    tkz = Nasl::Tokenizer.new("#")
+    tkz = tokenize("#")
     type, tok = tkz.get_token
     assert_equal(false, type)
     assert_equal(:EOF, tok.type)

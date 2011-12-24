@@ -31,7 +31,7 @@ module Nasl
   module Test
     def self.initialize!(args)
       # Run all tests by default.
-      args = ['unit/*'] if args.empty?
+      args = ['unit/*', 'unit/*/*'] if args.empty?
 
       # Run each test or category of tests specified on the command line.
       args.each do |test|
@@ -53,6 +53,14 @@ module Nasl
       end
 
       return tree, msg
+    end
+
+    def tokenize(code)
+      Nasl::Tokenizer.new(code, "(test)")
+    end
+
+    def context(code)
+      Nasl::Context.new(code, "(test)")
     end
 
     def fail(code)

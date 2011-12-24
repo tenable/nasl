@@ -24,13 +24,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/tokenizer'
-
 class TestTokenizerInteger < Test::Unit::TestCase
+  include Nasl::Test
+
   def exhaustive(base, type, prefix="")
     # Test all 16-bit integers.
     0.upto(2 ** 16 - 1) do |integer|
-      tkz = Nasl::Tokenizer.new("#{prefix}#{integer.to_s(base)}")
+      tkz = tokenize("#{prefix}#{integer.to_s(base)}")
       assert_nothing_raised(Nasl::TokenException) { tkz.get_token }
       assert_equal(type, tkz.reset.get_token.first)
     end
@@ -39,7 +39,7 @@ class TestTokenizerInteger < Test::Unit::TestCase
   def test_bad_hex
     "g".upto("z") do |digit|
       [:downcase, :upcase].each do |type|
-        tkz = Nasl::Tokenizer.new("0x#{digit}".send(type))
+        tkz = tokenize("0x#{digit}".send(type))
         assert_raise(Nasl::TokenException) { tkz.get_token }
       end
     end
@@ -47,7 +47,7 @@ class TestTokenizerInteger < Test::Unit::TestCase
 
   def test_bad_octal
     8.upto(9) do |digit|
-      tkz = Nasl::Tokenizer.new("0#{digit}")
+      tkz = tokenize("0#{digit}")
       assert_raise(Nasl::TokenException) { tkz.get_token }
     end
   end
@@ -55,7 +55,7 @@ class TestTokenizerInteger < Test::Unit::TestCase
   def test_bad_decimal
     1.upto(9) do |digit|
       "a".upto("z") do |letter|
-        tkz = Nasl::Tokenizer.new("#{digit}#{letter}")
+        tkz = tokenize("#{digit}#{letter}")
         assert_raise(Nasl::TokenException) { tkz.get_token }
       end
     end
