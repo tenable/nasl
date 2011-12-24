@@ -26,7 +26,7 @@
 
 module Nasl
   class Token
-    attr_reader :body, :region, :type
+    attr_reader :body, :name, :region, :type
 
     def initialize(type, body, region, ctx)
       @type = type
@@ -37,6 +37,29 @@ module Nasl
 
     def context(*args)
       @ctx.context(@region, *args)
+    end
+
+    def name
+      case @type
+      when *[:BREAK, :CONTINUE, :ELSE, :EXPORT, :FOR, :FOREACH, :FUNCTION,
+            :GLOBAL, :IF, :IMPORT, :INCLUDE, :LOCAL, :REPEAT, :RETURN, :UNTIL,
+            :REP, :WHILE]
+        "a keyword"
+      when :UNDEF
+        "an undefined constant"
+      when *[:FALSE, :TRUE]
+        "a boolean constant"
+      when :IDENT
+        "an identifier"
+      when *[:DATA, :STRING]
+        "a string"
+      when *[:INT_DEC, :INT_HEX, :INT_OCT]
+        "an integer"
+      when :EOF
+        "the end of the file"
+      else
+        "an operator"
+      end
     end
 
     def to_s

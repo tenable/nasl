@@ -497,7 +497,7 @@ def n(cls, *args)
 end
 
 def on_error(type, value, stack)
-  raise ParseException, "The language's grammar does not permit this #{value.type} to appear here", value.context
+  raise ParseException, "The language's grammar does not permit #{value.name} to appear here", value.context
 end
 
 def next_token
