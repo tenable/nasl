@@ -34,7 +34,7 @@ module Nasl
       super
 
       @name = @tokens[0]
-      @args = if @tokens[2].is_a? Argument then @tokens[2] else [] end
+      @args = if @tokens[2].is_a? Array then @tokens[2] else [] end
 
       @arg = {}
       @args.select { |a| a.type == :named }.each do |a|
