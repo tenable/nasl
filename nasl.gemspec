@@ -8,15 +8,11 @@ Gem::Specification.new do |s|
   s.authors     = ['Mak Kolybabi']
   s.email       = ['mak@kolybabi.com']
   s.homepage    = 'http://github.com/mogigoma/nasl'
-  s.summary     = %q{A static analysis framework for NASL.}
+  s.summary     = %q{A parser for the Nessus Attack Scripting Language.}
 
   s.rubyforge_project = 'nasl'
 
-  s.files         = `git ls-files`.split("\n") + ['lib/nasl/nasl.rex.rb', 'lib/nasl/nasl.tab.rb']
-
-  puts '-' * 80
-  puts s.files
-  puts '-' * 80
+  s.files         = `git ls-files`.split("\n") + ['lib/nasl/grammar.tab.rb']
 
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
@@ -26,5 +22,5 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'builder'
   s.add_runtime_dependency 'racc'
-  s.add_runtime_dependency 'rex'
+  s.add_runtime_dependency 'rainbow'
 end
