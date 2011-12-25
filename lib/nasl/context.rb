@@ -96,7 +96,7 @@ module Nasl
       ctx << line
 
       # Create the text to the right of the region.
-      line = @code[inner.end..outer.end].chomp
+      line = @code[inner.end...outer.end].chomp
       line = line.color(:green) if color
       ctx << line
 
