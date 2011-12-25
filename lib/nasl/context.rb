@@ -72,6 +72,10 @@ module Nasl
       # end of the line that the inner region finishes on.
       outer = bol(inner.begin)..eol(inner.end) if outer.nil?
 
+      # If the outer region argument was provided, but wasn't a Range, access
+      # its region member.
+      outer = outer.region unless outer.is_a? Range
+
       ctx = ""
       point = inner.begin
 
