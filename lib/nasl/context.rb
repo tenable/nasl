@@ -85,13 +85,13 @@ module Nasl
       # Create the text to the left of the region. The only case where there is
       # no text to the left is at the start of the program.
       if outer.begin != inner.begin
-        line = @code[outer.begin..inner.begin - 1]
+        line = @code[outer.begin...inner.begin]
         line = line.color(:green) if color
         ctx << line
       end
 
       # Create the text in the region.
-      line = @code[inner.begin..inner.end - 1]
+      line = @code[inner.begin...inner.end]
       line = line.color(:red) if color
       ctx << line
 
