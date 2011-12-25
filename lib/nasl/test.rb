@@ -44,15 +44,7 @@ module Nasl
     end
 
     def parse(code)
-      begin
-        tree = Nasl::Parser.new.parse(code)
-        msg = ''
-      rescue Racc::ParseError => e
-        tree = nil
-        msg = e
-      end
-
-      return tree, msg
+      Nasl::Parser.new.parse(code, "(test)")
     end
 
     def tokenize(code)
@@ -64,9 +56,9 @@ module Nasl
     end
 
     def fail(code)
-      tree, msg = parse(code)
+      tree = parse(code)
 
-      assert_nil(tree, msg)
+      assert_nil(tree)
     end
 
     def fail_parse(code)
@@ -78,20 +70,20 @@ module Nasl
     end
 
     def pass(code)
-      tree, msg = parse(code)
+      tree = parse(code)
 
-      assert_not_nil(tree, msg)
+      assert_not_nil(tree)
     end
 
     def diff(code, kg_tree)
-      tree, msg = parse(code)
-      assert_not_nil(tree, msg)
+      tree = parse(code)
+      assert_not_nil(tree)
       assert_not_equal(flatten(kg_tree), flatten(tree.to_s)) if !tree.nil?
     end
 
     def same(code, kg_tree)
-      tree, msg = parse(code)
-      assert_not_nil(tree, msg)
+      tree = parse(code)
+      assert_not_nil(tree)
       assert_equal(flatten(kg_tree), flatten(tree.to_s)) if !tree.nil?
     end
   end
