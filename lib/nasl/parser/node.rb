@@ -40,6 +40,14 @@ module Nasl
       @tokens = tokens
     end
 
+    def context(*args)
+      @tokens.first.context(args.shift, region, *args)
+    end
+
+    def region
+      @tokens.first.region.begin..@tokens.last.region.end
+    end
+
     def to_xml(xml)
       # Mangle the class name into something more appropriate for XML.
       name = self.class.name.split('::').last
