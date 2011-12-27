@@ -26,7 +26,7 @@
 
 module Nasl
   class Node
-    attr_reader :tokens
+    attr_reader :ctx, :tokens
 
     def initialize(tree, *tokens)
       # Register new node in the tree.
@@ -38,10 +38,13 @@ module Nasl
 
       # Store all of the tokens that made up this node.
       @tokens = tokens
+
+      # Extract the context object from the first token.
+      @ctx = @tokens.first.ctx
     end
 
     def context(*args)
-      @tokens.first.context(args.shift, region, *args)
+      @ctx.context(region, *args)
     end
 
     def region

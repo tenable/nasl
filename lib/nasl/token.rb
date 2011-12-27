@@ -26,7 +26,7 @@
 
 module Nasl
   class Token
-    attr_reader :body, :name, :region, :type
+    attr_reader :body, :ctx, :name, :region, :type
 
     def initialize(type, body, region, ctx)
       @type = type
