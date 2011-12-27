@@ -33,11 +33,11 @@ module Nasl
     def initialize(tree, *tokens)
       super
 
-      @cond = @tokens[1]
-      @body = @tokens[3]
+      @body = @tokens[1]
+      @cond = @tokens[3]
 
-      @attributes << :cond
       @attributes << :body
+      @attributes << :cond
     end
   end
 end
