@@ -33,7 +33,7 @@ module Nasl
     def initialize(tree, *tokens)
       super
 
-      @body = if @tokens.length == 3 then @tokens[1] else nil end
+      @body = if @tokens.length == 3 then @tokens[1] else [] end
 
       @attributes << :body
     end
