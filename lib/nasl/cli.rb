@@ -74,9 +74,7 @@ module Nasl
     end
 
     def self.usage
-      puts "For the moment, you have to run nasl-parse from its top-level directory."
-      puts
-      puts "./bin/nasl-parse [flags] [command] [path ...]"
+      puts "nasl-parse [flags] [command] [path ...]"
       puts
       puts "Flags:"
       puts "    -i iters    Benchmark the parser running 'iters' iterations, default #@@Iterations."

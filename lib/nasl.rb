@@ -29,7 +29,7 @@ require 'pathname'
 
 module Nasl
   def self.root
-    @root ||= Pathname.new('').expand_path
+    @root ||= Pathname.new(File.expand_path('../../', __FILE__))
   end
 
   def self.lib
