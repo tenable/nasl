@@ -24,22 +24,70 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-class TestTokenizerEmpty < Test::Unit::TestCase
+class TestTokenizerComment < Test::Unit::TestCase
   include Nasl::Test
 
-  def test_nothing
-    tkz = tokenize("")
-    type, tok = tkz.get_token
-    assert_equal(false, type)
-    assert_equal(:EOF, tok.type)
-    assert_equal("$", tok.body)
+  def test_empty
+    # Tokenize empty comment.
+    0.upto(3).each do |i|
+      tkz = tokenize((' ' * i) + '#')
+      type, tok = tkz.get_token
+      assert_equal(:COMMENT, type)
+      assert_equal('', tok.body)
+    end
   end
 
   def test_whitespace
-    tkz = tokenize("\n")
+    # Tokenize whitespace comment.
+    0.upto(3).each do |i|
+      tkz = tokenize('#' + (' ' * i))
+      type, tok = tkz.get_token
+      assert_equal(:COMMENT, type)
+      assert_equal(' ' * i, tok.body)
+    end
+  end
+
+  def test_block
+    tkz = tokenize(
+      <<-EOF
+      # Line 1
+      # Line 2
+      # Line 3
+      EOF
+    )
     type, tok = tkz.get_token
-    assert_equal(false, type)
-    assert_equal(:EOF, tok.type)
-    assert_equal("$", tok.body)
+    assert_equal(:COMMENT, type)
+    assert_equal(" Line 1\n Line 2\n Line 3", tok.body)
+  end
+
+  def test_unaligned
+    tkz = tokenize(
+      <<-EOF
+      # Comment 1
+       # Comment 2
+      EOF
+    )
+    type, tok = tkz.get_token
+    assert_equal(:COMMENT, type)
+    assert_equal(" Comment 1", tok.body)
+    type, tok = tkz.get_token
+    assert_equal(:COMMENT, type)
+    assert_equal(" Comment 2", tok.body)
+  end
+
+  def test_disjoint
+    tkz = tokenize(
+      <<-EOF
+      # Comment 1
+
+      # Comment 2
+      EOF
+    )
+    type, tok = tkz.get_token
+    assert_equal(:COMMENT, type)
+    assert_equal(" Comment 1", tok.body)
+    type, tok = tkz.get_token
+    assert_equal(:COMMENT, type)
+    assert_equal(" Comment 2", tok.body)
   end
 end
