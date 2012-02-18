@@ -167,7 +167,7 @@ module Nasl
 
     def skip
       while true do
-        whitespace = @line[/^(\s+|\s*#.*$)/]
+        whitespace = @line[/^\s+/]
         return if whitespace.nil?
         consume(whitespace.length)
       end
@@ -275,6 +275,25 @@ module Nasl
       return [type, contents]
     end
 
+    def get_comment
+      # Remember the column the comment begins in.
+      col = @ctx.col(@point)
+
+      # Consume all of the comments in the block.
+      block = []
+      begin
+        prev = @ctx.row(@point)
+        comment = @line[/^#.*$/]
+        break if comment.nil?
+        block << comment[1..-1]
+        consume(comment.length)
+        skip
+        cur = @ctx.row(@point)
+      end while @ctx.col(@point) == col && cur == prev + 1
+
+      return [:COMMENT, block.join("\n")]
+    end
+
     def get_operator
       # These are all of the operators defined in NASL. Their order is vitally
       # important.
@@ -302,6 +321,8 @@ module Nasl
         get_string
       elsif @char =~ /[0-9]/
         get_integer
+      elsif @char == '#'
+        get_comment
       else
         get_operator
       end
