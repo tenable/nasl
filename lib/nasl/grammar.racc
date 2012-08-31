@@ -505,9 +505,7 @@ def next_token
   @tok = @tkz.get_token
 
   # XXX-MAK: Ignore comments for now.
-  if @tok.is_a? Nasl::Comment
-    next_token
-  end
+  next_token if @tok.first == :COMMENT
 
   return @tok
 end
