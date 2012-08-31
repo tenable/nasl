@@ -454,6 +454,7 @@ require 'nasl/parser/assigment'
 require 'nasl/parser/block'
 require 'nasl/parser/break'
 require 'nasl/parser/call'
+require 'nasl/parser/comment'
 require 'nasl/parser/continue'
 require 'nasl/parser/decrement'
 require 'nasl/parser/empty'
@@ -502,6 +503,13 @@ end
 
 def next_token
   @tok = @tkz.get_token
+
+  # XXX-MAK: Ignore comments for now.
+  if @tok.is_a? Nasl::Comment
+    next_token
+  end
+
+  return @tok
 end
 
 def parse(env, code, path)
