@@ -484,7 +484,7 @@ require 'nasl/parser/while'
 
 def n(cls, *args)
   begin
-    Nasl.const_get(cls).new(@tree, *args)
+    node = Nasl.const_get(cls).new(@tree, *args)
   rescue
     puts "An exception occurred during the creation of a #{cls} instance."
     puts
@@ -495,6 +495,12 @@ def n(cls, *args)
     puts
     raise
   end
+
+  # Attach node to an awaiting comment.
+  Nasl::Comment.new(@tree, @comm, node) unless @comm.nil?
+  @comm = nil
+
+  return node
 end
 
 def on_error(type, value, stack)
@@ -504,13 +510,24 @@ end
 def next_token
   @tok = @tkz.get_token
 
-  # XXX-MAK: Ignore comments for now.
-  next_token if @tok.first == :COMMENT
+  case @tok.first
+  # Save comment for later, so we can attach the next node to it.
+  when :COMMENT
+    # Flush previous comment if it hasn't been done already.
+    Nasl::Comment.new(@tree, @comm, nil) unless @comm.nil?
+    @comm = @tok.last
+    @tok = next_token
+  # Handle comments at the end of the file.
+  when false
+    Nasl::Comment.new(@tree, @comm, nil) unless @comm.nil?
+    @comm = nil
+  end
 
   return @tok
 end
 
 def parse(env, code, path)
+  @comm = nil
   @tree = Tree.new(env)
   @tkz = Tokenizer.new(code, path)
   @tree.concat(do_parse)

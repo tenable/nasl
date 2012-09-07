@@ -24,24 +24,41 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/parser/node'
+class TestComment < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  class Comment < Node
-    attr_reader :next, :text
+  def test_standalone
+    tree = parse(
+      <<-EOF
+      # Standalone
+      EOF
+    )
+    assert_not_nil(tree)
 
-    def initialize(tree, *tokens)
-      super
+    comms = tree.all(:Comment)
+    assert_not_nil(comms)
+    assert_equal(1, comms.length)
 
-      @text = @tokens.first
-      @next = @tokens.last
+    comm = comms.first
+    assert_equal(" Standalone", comm.text.body)
+    assert_nil(comm.next)
+  end
 
-      # Tokens at the end of a file need to guard against RACC's [false, $].
-      @next = nil unless @next.is_a? Nasl::Node
-    end
+  def test_empty
+    tree = parse(
+      <<-EOF
+      # Empty
+      ;
+      EOF
+    )
+    assert_not_nil(tree)
 
-    def to_xml(xml)
-      xml.comment(@text)
-    end
+    comms = tree.all(:Comment)
+    assert_not_nil(comms)
+    assert_equal(1, comms.length)
+
+    comm = comms.first
+    assert_equal(" Empty", comm.text.body)
+    assert_equal(Nasl::Empty, comm.next.class)
   end
 end
