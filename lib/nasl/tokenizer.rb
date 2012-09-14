@@ -116,6 +116,12 @@ module Nasl
       ["}",    :RBRACE]
     ]
 
+    @@annotated = [
+      :EXPORT,
+      :FUNCTION,
+      :GLOBAL
+    ]
+
     def initialize!
       return if @@initialized
 
@@ -155,6 +161,11 @@ module Nasl
     end
 
     def reset
+      # We need to remember the last token so we only emit comments significant
+      # to nasldoc.
+      @previous = nil
+      @deferred = nil
+
       # Set tokenizer to initial state, ready to tokenize the code from the
       # start.
       @point = 0
@@ -307,6 +318,13 @@ module Nasl
     end
 
     def get_token
+      # If we deferred a token, emit it now.
+      unless @deferred.nil?
+        token = @deferred
+        @deferred = nil
+        return token
+      end
+
       # Make sure we're not at the end of the file.
       return [false, Token.new(:EOF, "$", @point...@point, @ctx)] if @eof
 
@@ -330,17 +348,39 @@ module Nasl
       # Everything in the language is enumerated by the above functions, so if
       # we get here without a token parsed, the input file is invalid.
       die("Invalid character ('#@char')") if token.nil?
-      skip
 
-      return [token.first, Token.new(*token, @mark...@point, @ctx)]
+      # Consume all whitespace after the token, and create an object with
+      # context.
+      skip
+      token = [token.first, Token.new(*token, @mark...@point, @ctx)]
+
+      # If a comment is the first token in a file, or is followed by certain
+      # tokens, then it is considered significant. Such tokens will appear in
+      # the grammar so that it can be made visible to nasldoc.
+      if token.first == :COMMENT
+        if @previous.nil?
+          @previous = [:DUMMY, ""]
+        else
+          @previous = token
+          token = get_token
+        end
+      elsif !@previous.nil? && @previous.first == :COMMENT && @@annotated.include?(token.first)
+        @deferred = token
+        token = @previous
+        @previous = @deferred       
+      else
+        @previous = token
+      end
+
+      return token
     end
 
     def get_tokens
       tokens = []
 
-      until @eof
+      begin
         tokens << get_token
-      end
+      end while not tokens.last.last.type == :EOF
 
       return tokens
     end

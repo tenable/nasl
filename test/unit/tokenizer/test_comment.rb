@@ -27,67 +27,188 @@
 class TestTokenizerComment < Test::Unit::TestCase
   include Nasl::Test
 
+  def verify(code, expected)
+    tkz = tokenize(code)
+    received = tkz.get_tokens
+
+    expected << [:EOF, "$"]
+
+    0.upto(received.length - 1) do |i|
+      tok = received[i].last
+
+      # Handle more tokens than expected.
+      if expected[i].nil?
+        assert_equal([tok.type, tok.body], [nil, nil])
+        break
+      end
+
+      assert_equal(tok.type, expected[i].first)
+      assert_equal(tok.body, expected[i].last)
+    end
+
+    # Handle less tokens than expected.
+    if received.length < expected.length
+      assert_equal([nil, nil], expected[received.length])
+    end
+
+    assert_equal(received.length, expected.length)
+  end
+
   def test_empty
     # Tokenize empty comment.
     0.upto(3).each do |i|
-      tkz = tokenize((' ' * i) + '#')
-      type, tok = tkz.get_token
-      assert_equal(:COMMENT, type)
-      assert_equal('', tok.body)
+      verify(' ' * i + '#', [[:COMMENT, '']])
     end
   end
 
   def test_whitespace
     # Tokenize whitespace comment.
     0.upto(3).each do |i|
-      tkz = tokenize('#' + (' ' * i))
-      type, tok = tkz.get_token
-      assert_equal(:COMMENT, type)
-      assert_equal(' ' * i, tok.body)
+      verify('#' + ' ' * i, [[:COMMENT, ' ' * i]])
     end
   end
 
   def test_block
-    tkz = tokenize(
-      <<-EOF
+    code = <<-EOF
       # Line 1
       # Line 2
       # Line 3
-      EOF
-    )
-    type, tok = tkz.get_token
-    assert_equal(:COMMENT, type)
-    assert_equal(" Line 1\n Line 2\n Line 3", tok.body)
+    EOF
+
+    verify(code, [[:COMMENT, " Line 1\n Line 2\n Line 3"]])
   end
 
   def test_unaligned
-    tkz = tokenize(
-      <<-EOF
+    code = <<-EOF
       # Comment 1
        # Comment 2
-      EOF
-    )
-    type, tok = tkz.get_token
-    assert_equal(:COMMENT, type)
-    assert_equal(" Comment 1", tok.body)
-    type, tok = tkz.get_token
-    assert_equal(:COMMENT, type)
-    assert_equal(" Comment 2", tok.body)
+    EOF
+
+    verify(code, [[:COMMENT, " Comment 1"]])
   end
 
   def test_disjoint
-    tkz = tokenize(
-      <<-EOF
+    code = <<-EOF
       # Comment 1
 
       # Comment 2
-      EOF
+    EOF
+
+    verify(code, [[:COMMENT, " Comment 1"]])
+  end
+
+  def test_hidden_before
+    code = <<-EOF
+      foo = TRUE;
+      # Comment
+      foo = TRUE;
+    EOF
+
+    assign = [
+      [:IDENT, "foo"],
+      [:ASS_EQ, "="],
+      [:TRUE, "TRUE"],
+      [:SEMICOLON, ";"],
+    ]
+
+    verify(code, assign + assign) 
+  end
+
+  def test_hidden_aften
+    code = <<-EOF
+      foo = TRUE;
+
+      # Comment
+    EOF
+
+    verify(
+      code,
+      [
+        [:IDENT, "foo"],
+        [:ASS_EQ, "="],
+        [:TRUE, "TRUE"],
+        [:SEMICOLON, ";"],
+      ]
     )
-    type, tok = tkz.get_token
-    assert_equal(:COMMENT, type)
-    assert_equal(" Comment 1", tok.body)
-    type, tok = tkz.get_token
-    assert_equal(:COMMENT, type)
-    assert_equal(" Comment 2", tok.body)
+  end
+
+  def test_export
+    code = <<-EOF
+      foo = TRUE;
+
+      # Comment
+      export function bar();
+    EOF
+
+    verify(
+      code,
+      [
+        [:IDENT, "foo"],
+        [:ASS_EQ, "="],
+        [:TRUE, "TRUE"],
+        [:SEMICOLON, ";"],
+
+        [:COMMENT, " Comment"],
+
+        [:EXPORT, "export"],
+        [:FUNCTION, "function"],
+        [:IDENT, "bar"],
+        [:LPAREN, "("],
+        [:RPAREN, ")"],
+        [:SEMICOLON, ";"]
+      ]
+    )
+  end
+
+  def test_function
+    code = <<-EOF
+      foo = TRUE;
+
+      # Comment
+      function bar();
+    EOF
+
+    verify(
+      code,
+      [
+        [:IDENT, "foo"],
+        [:ASS_EQ, "="],
+        [:TRUE, "TRUE"],
+        [:SEMICOLON, ";"],
+
+        [:COMMENT, " Comment"],
+
+        [:FUNCTION, "function"],
+        [:IDENT, "bar"],
+        [:LPAREN, "("],
+        [:RPAREN, ")"],
+        [:SEMICOLON, ";"]
+      ]
+    )
+  end
+
+  def test_global
+    code = <<-EOF
+      foo = TRUE;
+
+      # Comment
+      global_var bar;
+    EOF
+
+    verify(
+      code,
+      [
+        [:IDENT, "foo"],
+        [:ASS_EQ, "="],
+        [:TRUE, "TRUE"],
+        [:SEMICOLON, ";"],
+
+        [:COMMENT, " Comment"],
+
+        [:GLOBAL, "global_var"],
+        [:IDENT, "bar"],
+        [:SEMICOLON, ";"]
+      ]
+    )
   end
 end
