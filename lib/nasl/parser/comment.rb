@@ -36,8 +36,7 @@ module Nasl
       @text = @tokens.first
       @next = @tokens.last
 
-      # Tokens at the end of a file need to guard against RACC's [false, $].
-      @next = nil unless @next.is_a? Nasl::Node
+      @next = nil if @tokens.length == 1
     end
 
     def to_xml(xml)

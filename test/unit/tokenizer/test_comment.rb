@@ -38,33 +38,35 @@ class TestTokenizerComment < Test::Unit::TestCase
 
       # Handle more tokens than expected.
       if expected[i].nil?
-        assert_equal([tok.type, tok.body], [nil, nil])
+        assert_equal([nil, nil], [tok.type, tok.body])
         break
       end
 
-      assert_equal(tok.type, expected[i].first)
-      assert_equal(tok.body, expected[i].last)
+      assert_equal(expected[i].first, tok.type, tok.context)
+      assert_equal(expected[i].last, tok.body, tok.context)
     end
 
     # Handle less tokens than expected.
     if received.length < expected.length
-      assert_equal([nil, nil], expected[received.length])
+      assert_equal(expected[received.length], [nil, nil])
     end
 
-    assert_equal(received.length, expected.length)
+    assert_equal(expected.length, received.length)
   end
 
   def test_empty
     # Tokenize empty comment.
     0.upto(3).each do |i|
-      verify(' ' * i + '#', [[:COMMENT, '']])
+      pad = ' ' * i
+      verify(pad + '#', [[:COMMENT, '#']])
     end
   end
 
   def test_whitespace
     # Tokenize whitespace comment.
     0.upto(3).each do |i|
-      verify('#' + ' ' * i, [[:COMMENT, ' ' * i]])
+      pad = ' ' * i
+      verify('#' + pad, [[:COMMENT, '#' + pad]])
     end
   end
 
@@ -75,7 +77,7 @@ class TestTokenizerComment < Test::Unit::TestCase
       # Line 3
     EOF
 
-    verify(code, [[:COMMENT, " Line 1\n Line 2\n Line 3"]])
+    verify(code, [[:COMMENT, "# Line 1\n# Line 2\n# Line 3"]])
   end
 
   def test_unaligned
@@ -84,7 +86,7 @@ class TestTokenizerComment < Test::Unit::TestCase
        # Comment 2
     EOF
 
-    verify(code, [[:COMMENT, " Comment 1"]])
+    verify(code, [[:COMMENT, "# Comment 1"]])
   end
 
   def test_disjoint
@@ -94,7 +96,7 @@ class TestTokenizerComment < Test::Unit::TestCase
       # Comment 2
     EOF
 
-    verify(code, [[:COMMENT, " Comment 1"]])
+    verify(code, [[:COMMENT, "# Comment 1"]])
   end
 
   def test_hidden_before
@@ -136,8 +138,8 @@ class TestTokenizerComment < Test::Unit::TestCase
     code = <<-EOF
       foo = TRUE;
 
-      # Comment
-      export function bar();
+      # Export
+      export function bar() {}
     EOF
 
     verify(
@@ -148,14 +150,15 @@ class TestTokenizerComment < Test::Unit::TestCase
         [:TRUE, "TRUE"],
         [:SEMICOLON, ";"],
 
-        [:COMMENT, " Comment"],
+        [:COMMENT, "# Export"],
 
         [:EXPORT, "export"],
         [:FUNCTION, "function"],
         [:IDENT, "bar"],
         [:LPAREN, "("],
         [:RPAREN, ")"],
-        [:SEMICOLON, ";"]
+        [:LBRACE, "{"],
+        [:RBRACE, "}"]
       ]
     )
   end
@@ -164,8 +167,8 @@ class TestTokenizerComment < Test::Unit::TestCase
     code = <<-EOF
       foo = TRUE;
 
-      # Comment
-      function bar();
+      # Function
+      function bar() {}
     EOF
 
     verify(
@@ -176,13 +179,14 @@ class TestTokenizerComment < Test::Unit::TestCase
         [:TRUE, "TRUE"],
         [:SEMICOLON, ";"],
 
-        [:COMMENT, " Comment"],
+        [:COMMENT, "# Function"],
 
         [:FUNCTION, "function"],
         [:IDENT, "bar"],
         [:LPAREN, "("],
         [:RPAREN, ")"],
-        [:SEMICOLON, ";"]
+        [:LBRACE, "{"],
+        [:RBRACE, "}"]
       ]
     )
   end
@@ -191,7 +195,7 @@ class TestTokenizerComment < Test::Unit::TestCase
     code = <<-EOF
       foo = TRUE;
 
-      # Comment
+      # Global
       global_var bar;
     EOF
 
@@ -203,7 +207,7 @@ class TestTokenizerComment < Test::Unit::TestCase
         [:TRUE, "TRUE"],
         [:SEMICOLON, ";"],
 
-        [:COMMENT, " Comment"],
+        [:COMMENT, "# Global"],
 
         [:GLOBAL, "global_var"],
         [:IDENT, "bar"],

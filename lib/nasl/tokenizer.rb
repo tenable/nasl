@@ -296,7 +296,7 @@ module Nasl
         prev = @ctx.row(@point)
         comment = @line[/^#.*$/]
         break if comment.nil?
-        block << comment[1..-1]
+        block << comment
         consume(comment.length)
         skip
         cur = @ctx.row(@point)

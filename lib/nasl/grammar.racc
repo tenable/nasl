@@ -70,8 +70,12 @@ rule
              { [val[0]] }
              ;
 
-  root       : export
+  root       : COMMENT export
+             { c(*val) }
+             | export
              { val[0] }
+             | COMMENT function
+             { c(*val) }
              | function
              { val[0] }
              | statement
@@ -110,6 +114,8 @@ rule
              { val[0] }
              | empty
              { val[0] }
+             | COMMENT global
+             { c(*val) }
              | global
              { val[0] }
              | import
@@ -484,7 +490,7 @@ require 'nasl/parser/while'
 
 def n(cls, *args)
   begin
-    node = Nasl.const_get(cls).new(@tree, *args)
+    Nasl.const_get(cls).new(@tree, *args)
   rescue
     puts "An exception occurred during the creation of a #{cls} instance."
     puts
@@ -495,12 +501,11 @@ def n(cls, *args)
     puts
     raise
   end
+end
 
-  # Attach node to an awaiting comment.
-  Nasl::Comment.new(@tree, @comm, node) unless @comm.nil?
-  @comm = nil
-
-  return node
+def c(*args)
+  n(:Comment, *args)
+  args[1..-1]
 end
 
 def on_error(type, value, stack)
@@ -510,24 +515,17 @@ end
 def next_token
   @tok = @tkz.get_token
 
-  case @tok.first
-  # Save comment for later, so we can attach the next node to it.
-  when :COMMENT
-    # Flush previous comment if it hasn't been done already.
-    Nasl::Comment.new(@tree, @comm, nil) unless @comm.nil?
-    @comm = @tok.last
-    @tok = next_token
-  # Handle comments at the end of the file.
-  when false
-    Nasl::Comment.new(@tree, @comm, nil) unless @comm.nil?
-    @comm = nil
+  if @first && @tok.first == :COMMENT
+    n(:Comment, @tok.last)
+    @tok = @tkz.get_token
+    @first = false
   end
 
   return @tok
 end
 
 def parse(env, code, path)
-  @comm = nil
+  @first = true
   @tree = Tree.new(env)
   @tkz = Tokenizer.new(code, path)
   @tree.concat(do_parse)

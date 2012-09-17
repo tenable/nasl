@@ -40,7 +40,7 @@ class TestComment < Test::Unit::TestCase
     assert_equal(1, comms.length)
 
     comm = comms.first
-    assert_equal(" Standalone", comm.text.body)
+    assert_equal("# Standalone", comm.text.body)
     assert_nil(comm.next)
   end
 
@@ -58,7 +58,67 @@ class TestComment < Test::Unit::TestCase
     assert_equal(1, comms.length)
 
     comm = comms.first
-    assert_equal(" Empty", comm.text.body)
-    assert_equal(Nasl::Empty, comm.next.class)
+    assert_equal("# Empty", comm.text.body)
+    #assert_equal(Nasl::Empty, comm.next.class)
+  end
+
+  def test_export
+    tree = parse(
+      <<-EOF
+      foo = TRUE;
+
+      # Export
+      export function foo() {}
+      EOF
+    )
+    assert_not_nil(tree)
+
+    comms = tree.all(:Comment)
+    assert_not_nil(comms)
+    assert_equal(1, comms.length)
+
+    comm = comms.first
+    assert_equal("# Export", comm.text.body)
+    #assert_equal(Nasl::Empty, comm.next.class)
+  end
+
+  def test_function
+    tree = parse(
+      <<-EOF
+      foo = TRUE;
+
+      # Function
+      function foo() {}
+      EOF
+    )
+    assert_not_nil(tree)
+
+    comms = tree.all(:Comment)
+    assert_not_nil(comms)
+    assert_equal(1, comms.length)
+
+    comm = comms.first
+    assert_equal("# Function", comm.text.body)
+    #assert_equal(Nasl::Empty, comm.next.class)
+  end
+
+  def test_global
+    tree = parse(
+      <<-EOF
+      foo = TRUE;
+
+      # Global
+      global_var bar;
+      EOF
+    )
+    assert_not_nil(tree)
+
+    comms = tree.all(:Comment)
+    assert_not_nil(comms)
+    assert_equal(1, comms.length)
+
+    comm = comms.first
+    assert_equal("# Global", comm.text.body)
+    #assert_equal(Nasl::Empty, comm.next.class)
   end
 end
