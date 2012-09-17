@@ -505,7 +505,7 @@ end
 
 def c(*args)
   n(:Comment, *args)
-  args[1..-1]
+  args[1]
 end
 
 def on_error(type, value, stack)
@@ -518,8 +518,8 @@ def next_token
   if @first && @tok.first == :COMMENT
     n(:Comment, @tok.last)
     @tok = @tkz.get_token
-    @first = false
   end
+  @first = false
 
   return @tok
 end

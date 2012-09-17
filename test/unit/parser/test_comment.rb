@@ -44,10 +44,10 @@ class TestComment < Test::Unit::TestCase
     assert_nil(comm.next)
   end
 
-  def test_empty
+  def test_unattached
     tree = parse(
       <<-EOF
-      # Empty
+      # Unattached
       ;
       EOF
     )
@@ -58,8 +58,24 @@ class TestComment < Test::Unit::TestCase
     assert_equal(1, comms.length)
 
     comm = comms.first
-    assert_equal("# Empty", comm.text.body)
-    #assert_equal(Nasl::Empty, comm.next.class)
+    assert_equal("# Unattached", comm.text.body)
+    assert_nil(comm.next)
+
+    tree = parse(
+      <<-EOF
+      # Unattached
+      global_var foo;
+      EOF
+    )
+    assert_not_nil(tree)
+
+    comms = tree.all(:Comment)
+    assert_not_nil(comms)
+    assert_equal(1, comms.length)
+
+    comm = comms.first
+    assert_equal("# Unattached", comm.text.body)
+    assert_nil(comm.next)
   end
 
   def test_export
@@ -79,7 +95,7 @@ class TestComment < Test::Unit::TestCase
 
     comm = comms.first
     assert_equal("# Export", comm.text.body)
-    #assert_equal(Nasl::Empty, comm.next.class)
+    assert_equal(Nasl::Export, comm.next.class)
   end
 
   def test_function
@@ -99,7 +115,7 @@ class TestComment < Test::Unit::TestCase
 
     comm = comms.first
     assert_equal("# Function", comm.text.body)
-    #assert_equal(Nasl::Empty, comm.next.class)
+    assert_equal(Nasl::Function, comm.next.class)
   end
 
   def test_global
@@ -119,6 +135,6 @@ class TestComment < Test::Unit::TestCase
 
     comm = comms.first
     assert_equal("# Global", comm.text.body)
-    #assert_equal(Nasl::Empty, comm.next.class)
+    assert_equal(Nasl::Global, comm.next.class)
   end
 end
