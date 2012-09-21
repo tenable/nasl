@@ -86,6 +86,7 @@ module Nasl
       puts "    benchmark   Benchmarks the parsing of the input path(s)."
       puts "    parse       Parses the input path(s)."
       puts "    test        Runs the specified unit tests, all are selected by default."
+      puts "    tokenize    Tokenizes the input path(s)."
       puts "    xml         Parses the input path(s) and displays them as XML."
     end
   end

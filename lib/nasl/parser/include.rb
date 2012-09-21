@@ -1,4 +1,4 @@
-################################################################################
+!################################################################################
 # Copyright (c) 2011-2012, Mak Kolybabi
 # All rights reserved.
 #
@@ -35,7 +35,7 @@ module Nasl
 
       @filename = @tokens[2]
 
-      @attributes << :filename
+      @children << :filename
     end
   end
 end

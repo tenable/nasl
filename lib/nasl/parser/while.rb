@@ -36,8 +36,8 @@ module Nasl
       @cond = @tokens[2]
       @body = @tokens[4]
 
-      @attributes << :cond
-      @attributes << :body
+      @children << :cond
+      @children << :body
     end
   end
 end

@@ -32,9 +32,9 @@ module Nasl
       # Register new node in the tree.
       tree.register(self)
 
-      # Create the attributes array which is used for converting the parse tree
-      # to XML.
+      # Create the arrays which are used for converting the parse tree to XML.
       @attributes = []
+      @children = []
 
       # Store all of the tokens that made up this node.
       @tokens = tokens
@@ -56,22 +56,25 @@ module Nasl
       name = self.class.name.split('::').last
       name = name.gsub(/(.)([A-Z])/, '\1_\2').downcase
 
+      # Create a hash from the attribute array.
+      attr = Hash[@attributes.map{ |el| [el, self.send(el)] }]
+
       # If there are no attributes, make a modified opening tag.
-      return xml.tag!(name) if @attributes.empty?
+      return xml.tag!(name, attr) if @children.empty?
 
       # Create the tag representing this node.
-      xml.tag!(name) do
-        @attributes.each do |name|
+      xml.tag!(name, attr) do
+        @children.each do |name|
           # Retrieve the object that the symbol indicates.
           obj = self.send(name)
 
-          # Skip over unused attributes.
+          # Skip over empty children.
           next if obj.nil?
 
           # Handle objects that are arrays holding nodes, or basic types that
           # aren't nodes.
           if obj.is_a? Array
-            obj.each { |node| node.to_xml(xml) }
+            obj.each { |el| el.to_xml(xml) }
           elsif obj.is_a? Node
             obj.to_xml(xml)
           else

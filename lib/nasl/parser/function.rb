@@ -37,9 +37,9 @@ module Nasl
       @params = if @tokens.length == 6 then @tokens[3] else [] end
       @body = @tokens.last
 
-      @attributes << :name
-      @attributes << :params
-      @attributes << :body
+      @children << :name
+      @children << :params
+      @children << :body
     end
   end
 end

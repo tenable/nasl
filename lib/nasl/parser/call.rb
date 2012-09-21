@@ -41,8 +41,8 @@ module Nasl
         @arg[a.name.name] = a.expr
       end
 
-      @attributes << :name
-      @attributes << :args
+      @children << :name
+      @children << :args
     end
   end
 end

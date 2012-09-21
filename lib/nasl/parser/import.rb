@@ -35,7 +35,7 @@ module Nasl
 
       @filename = @tokens[2]
 
-      @attributes << :filename
+      @children << :filename
     end
   end
 end

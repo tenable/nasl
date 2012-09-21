@@ -35,7 +35,7 @@ module Nasl
 
       @function = @tokens[1]
 
-      @attributes << :function
+      @children << :function
     end
   end
 end

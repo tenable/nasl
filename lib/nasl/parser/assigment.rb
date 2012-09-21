@@ -37,9 +37,9 @@ module Nasl
       @op = @tokens[1]
       @expr = @tokens[2]
 
-      @attributes << :op
-      @attributes << :lval
-      @attributes << :expr
+      @children << :op
+      @children << :lval
+      @children << :expr
     end
   end
 end

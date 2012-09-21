@@ -35,7 +35,7 @@ module Nasl
 
       @expr = if @tokens.length == 3 then @tokens[1] else nil end
 
-      @attributes << :expr
+      @children << :expr
     end
   end
 end

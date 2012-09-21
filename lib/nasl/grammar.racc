@@ -151,7 +151,7 @@ rule
   ##############################################################################
 
   assign     : assign_exp SEMICOLON
-             { n(:Assignment, *val[0], val[1]) }
+             { val[0] }
              ;
 
   break      : BREAK SEMICOLON
@@ -159,7 +159,7 @@ rule
              ;
 
   call       : call_exp SEMICOLON
-             { n(:Call, *val[0], val[1]) }
+             { val[0] }
              ;
 
   continue   : CONTINUE SEMICOLON
@@ -167,7 +167,7 @@ rule
              ;
 
   decr       : decr_exp SEMICOLON
-             { n(:Decrement, *val[0], val[1]) }
+             { val[0] }
              ;
 
   empty      : SEMICOLON
@@ -179,7 +179,7 @@ rule
              ;
 
   incr       : incr_exp SEMICOLON
-             { n(:Increment, *val[0], val[1]) }
+             { val[0] }
              ;
 
   import     : IMPORT LPAREN string RPAREN SEMICOLON
@@ -195,7 +195,7 @@ rule
              ;
 
   rep        : call_exp REP expr SEMICOLON
-             { n(:Repetition, n(:Call, *val[0]), *val[1..-1]) }
+             { n(:Repetition, n(:Call, val[0]), *val[1..-1]) }
              ;
 
   return     : RETURN expr SEMICOLON
@@ -241,40 +241,40 @@ rule
   ##############################################################################
 
   assign_exp : lval ASS_EQ expr
-             { val }
+             { n(:Assignment, *val) }
              | lval ADD_EQ expr
-             { val }
+             { n(:Assignment, *val) }
              | lval SUB_EQ expr
-             { val }
+             { n(:Assignment, *val) }
              | lval MUL_EQ expr
-             { val }
+             { n(:Assignment, *val) }
              | lval DIV_EQ expr
-             { val }
+             { n(:Assignment, *val) }
              | lval MOD_EQ expr
-             { val }
+             { n(:Assignment, *val) }
              | lval SRL_EQ expr
-             { val }
+             { n(:Assignment, *val) }
              | lval SRA_EQ expr
-             { val }
+             { n(:Assignment, *val) }
              | lval SLL_EQ expr
-             { val }
+             { n(:Assignment, *val) }
              ;
 
   call_exp   : ident LPAREN args RPAREN
-             { val }
+             { n(:Call, *val) }
              | ident LPAREN RPAREN
-             { val }
+             { n(:Call, *val) }
 
   decr_exp   : DECR lval
-             { val }
+             { n(:Decrement, val[0]) }
              | lval DECR
-             { val }
+             { n(:Decrement, val[0]) }
              ;
 
   incr_exp   : INCR lval
-             { val }
+             { n(:Increment, val[0]) }
              | lval INCR
-             { val }
+             { n(:Increment, val[0]) }
              ;
 
   expr       : LPAREN expr RPAREN
@@ -314,9 +314,9 @@ rule
              | expr BIT_SLL expr
              { n(:Expression, *val) }
              | incr_exp
-             { n(:Increment, *val[0]) }
+             { val[0] }
              | decr_exp
-             { n(:Decrement, *val[0]) }
+             { val[0] }
              | expr SUBSTR_EQ expr
              { n(:Expression, *val) }
              | expr SUBSTR_NE expr
@@ -338,11 +338,11 @@ rule
              | expr CMP_LE expr
              { n(:Expression, *val) }
              | assign_exp
-             { n(:Assignment, *val[0]) }
+             { val[0] }
              | string
              { val[0] }
              | call_exp
-             { n(:Call, *val[0]) }
+             { val[0] }
              | lval
              { val[0] }
              | ip

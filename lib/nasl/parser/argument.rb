@@ -43,8 +43,9 @@ module Nasl
         @type = :anonymous
       end
 
-      @attributes << :name
-      @attributes << :expr
+      @attributes << :type
+      @children << :name
+      @children << :expr
     end
   end
 end

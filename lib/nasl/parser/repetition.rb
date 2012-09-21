@@ -36,8 +36,8 @@ module Nasl
       @call = tokens[0]
       @expr = tokens[2]
 
-      @attributes << :call
-      @attributes << :expr
+      @children << :call
+      @children << :expr
     end
   end
 end

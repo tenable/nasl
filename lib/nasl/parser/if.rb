@@ -1,4 +1,4 @@
-################################################################################
+!################################################################################
 # Copyright (c) 2011-2012, Mak Kolybabi
 # All rights reserved.
 #
@@ -37,9 +37,9 @@ module Nasl
       @true = @tokens[4]
       @false = if @tokens.length == 7 then @tokens.last else nil end
 
-      @attributes << :cond
-      @attributes << :true
-      @attributes << :false
+      @children << :cond
+      @children << :true
+      @children << :false
     end
   end
 end

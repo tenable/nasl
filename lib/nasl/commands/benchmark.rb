@@ -33,23 +33,19 @@ module Nasl
     end
 
     def self.analyze(cfg, path, args)
-      puts banner(path.basename)
-
       Benchmark.bmbm do |b|
         # Read in the file outside of the benchmark, to avoid contaminating it
         # with filesystem operations.
         contents = File.open(path, "rb").read
 
         b.report("Tokenize") do
-          cfg[:iterations].times { Tokenizer.new(contents).get_all }
+          cfg[:iterations].times { Tokenizer.new(contents, path).get_tokens }
         end
 
-        #b.report("Parse") do
-        #  cfg[:iterations].times { Parser.new.parse(contents) }
-        #end
+        b.report("Parse") do
+          cfg[:iterations].times { Parser.new.parse(contents) }
+        end
       end
-
-      puts banner(path.basename)
     end
   end
 end

@@ -34,7 +34,9 @@ module Nasl
       contents = File.open(path, "rb").read
 
       begin
-        Tokenizer.new(contents, path).get_tokens
+        Tokenizer.new(contents, path).get_tokens.each do |t|
+          puts "[#{(t.first.to_s + ',').ljust(10)}#{t.last.region.to_s.rjust(20)}]"
+        end
       rescue TokenException => e
         puts "The tokenizer raised the following exceptions when processing #{path}:"
         puts e.message

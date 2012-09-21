@@ -33,7 +33,7 @@ module Nasl
     def initialize(tree, *tokens)
       super
 
-      @attributes << :op
+      @children << :op
 
       if @tokens.first.is_a?(Token) && @tokens.first.type == :LPAREN
         @op = '()'
@@ -44,13 +44,13 @@ module Nasl
         @lhs = nil
         @rhs = @tokens.last
       else
-        @attributes << :lhs
+        @children << :lhs
         @lhs = @tokens[0]
         @op = @tokens[1]
         @rhs = @tokens[2]
       end
 
-      @attributes << :rhs
+      @children << :rhs
     end
   end
 end

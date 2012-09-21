@@ -89,7 +89,11 @@ module Nasl
       if self.respond_to? :analyze_all then
         analyze_all(cfg, dirents, args)
       else
-        dirents.each { |d| analyze(cfg, d, args) }
+        dirents.each do |d|
+          puts banner(d.basename)
+          analyze(cfg, d, args)
+          puts banner(d.basename)
+        end
       end
     end
   end

@@ -32,10 +32,7 @@ module Nasl
 
     def self.analyze(cfg, path, args)
       contents = File.open(path, "rb").read
-
-      puts banner(path.basename)
       puts Parser.new.parse(contents).to_s
-      puts banner(path.basename)
     end
   end
 end

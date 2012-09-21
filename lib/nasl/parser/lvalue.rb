@@ -36,8 +36,8 @@ module Nasl
       @ident = @tokens.first
       @indexes = if @tokens.length == 2 then tokens.last else [] end
 
-      @attributes << :ident
-      @attributes << :indexes
+      @children << :ident
+      @children << :indexes
     end
   end
 end

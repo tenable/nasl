@@ -35,7 +35,7 @@ module Nasl
 
       @idents = @tokens[1]
 
-      @attributes << :idents
+      @children << :idents
     end
   end
 end

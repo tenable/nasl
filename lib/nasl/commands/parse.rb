@@ -24,8 +24,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'rainbow'
-
 module Nasl
   class CommandParse < Command
     def self.binding
@@ -36,20 +34,20 @@ module Nasl
       begin
         contents = File.open(path, "rb").read
       rescue
-        puts '[' + 'VOID'.color(:magenta) + "] #{path}"
+        puts "Failed to read in the contents of the file."
         return
       end
 
       begin
         Parser.new.parse(contents, path)
       rescue Exception => e
-        puts '[' + 'FAIL'.color(:red) + "] #{path}"
+        puts "Failed to parse the contents of the file."
         puts e.message
         puts e.backtrace
         return
       end
 
-      puts '[' + 'PASS'.color(:green) + "] #{path}"
+      puts "Successfully parsed the contents of the file."
     end
   end
 end

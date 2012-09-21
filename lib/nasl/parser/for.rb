@@ -1,4 +1,4 @@
-################################################################################
+!################################################################################
 # Copyright (c) 2011-2012, Mak Kolybabi
 # All rights reserved.
 #
@@ -38,10 +38,10 @@ module Nasl
       @each = @tokens[6]
       @body = @tokens[8]
 
-      @attributes << :init
-      @attributes << :cond
-      @attributes << :each
-      @attributes << :body
+      @children << :init
+      @children << :cond
+      @children << :each
+      @children << :body
     end
   end
 end

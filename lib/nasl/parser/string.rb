@@ -1,4 +1,4 @@
-################################################################################
+!################################################################################
 # Copyright (c) 2011-2012, Mak Kolybabi
 # All rights reserved.
 #
@@ -38,11 +38,7 @@ module Nasl
     end
 
     def to_xml(xml)
-      if @type == :DATA
-        xml.data(@text)
-      else
-        xml.string(@text)
-      end
+      xml.method_missing(@type.downcase, @text)
     end
   end
 end

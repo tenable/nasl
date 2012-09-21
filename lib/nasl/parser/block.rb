@@ -35,7 +35,7 @@ module Nasl
 
       @body = if @tokens.length == 3 then @tokens[1] else [] end
 
-      @attributes << :body
+      @children << :body
     end
   end
 end
