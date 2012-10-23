@@ -6,7 +6,7 @@ require 'nasl/version'
 Gem::Specification.new do |s|
   s.name        = 'nasl'
   s.version     = Nasl::VERSION
-  s.license     = "BSD"
+  s.license     = 'BSD'
   s.homepage    = 'http://github.com/tenable/nasl'
   s.summary     = 'A parser for the Nessus Attack Scripting Language.'
   s.description = File.open('README.md').read
