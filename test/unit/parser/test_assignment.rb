@@ -37,7 +37,7 @@ class TestAssignment < Test::Unit::TestCase
   def test_string
     same(
       "q = '';",
-      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><data/></assignment></tree>'
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><data></data></assignment></tree>'
     )
     same(
       "q = 'foo';",
@@ -45,7 +45,7 @@ class TestAssignment < Test::Unit::TestCase
     )
     same(
       'q = "";',
-      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><string/></assignment></tree>'
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><string></string></assignment></tree>'
     )
     same(
       'q = "foo";',
