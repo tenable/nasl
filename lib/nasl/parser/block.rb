@@ -30,12 +30,18 @@ module Nasl
   class Block < Node
     attr_reader :body
 
+    include Enumerable
+
     def initialize(tree, *tokens)
       super
 
       @body = if @tokens.length == 3 then @tokens[1] else [] end
 
       @children << :body
+    end
+
+    def each
+      @body.each{ |stmt| yield stmt }
     end
   end
 end

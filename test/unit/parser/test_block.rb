@@ -27,6 +27,34 @@
 class TestBlock < Test::Unit::TestCase
   include Nasl::Test
 
+  def test_each
+    tree = parse(
+      <<-EOF
+      {
+        a = 1;
+        break;
+        fn();
+        ;
+      }
+      EOF
+    )
+    assert_not_nil(tree)
+
+    blks = tree.all(:Block)
+    assert_not_nil(blks)
+    assert_equal(1, blks.length)
+
+    clss = [:Assignment, :Break, :Call, :Empty]
+
+    i = 0
+    blks.first.each do |stmt|
+      assert_not_nil(stmt)
+      assert_equal(Nasl.const_get(clss[i]), stmt.class)
+
+      i += 1
+    end
+  end
+
   def test_empty
     same("{}", "<tree><block></block></tree>")
     same("{;}", "<tree><block><empty/></block></tree>")
