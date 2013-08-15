@@ -22,11 +22,11 @@ Standalone
 ----------
 
 To avoid conflicting with the NASL interpreter, the NASL gem's binary is
-installed as <nasl-parse>. As an application, it has very few actions that it
+installed as `nasl-parse`. As an application, it has very few actions that it
 can perform.
 
 * Benchmark: This benchmarks the time taken to parse the input path(s) over a
-  number of iterations. The number of iterations can be adjusted by the <-i>
+  number of iterations. The number of iterations can be adjusted by the `-i`
   switch.
 
         % nasl-parse -i 10 benchmark /opt/nessus/lib/nessus/plugins/ssl_certificate_chain.nasl
@@ -93,7 +93,7 @@ Library
 -------
 
 The primary users of this gem are [Pedant][pedant] and [Nasldoc][nasldoc]. Other
-uses are encouraged, of course! The <Parser> class is the most useful part,
+uses are encouraged, of course! The `Parser` class is the most useful part,
 obviously, and can be used as follows:
 
     require 'nasl'
@@ -101,7 +101,7 @@ obviously, and can be used as follows:
     tree = Nasl::Parser.new.parse(file_contents, path_to_file)
 
 That's all there is to it. If there are any errors, it'll throw an instance of
-<ParseException> that will include as much context about the error as possible.
+`ParseException` that will include as much context about the error as possible.
 
 [nasldoc]: https://github.com/tenable/nasldoc
 [pedant]: https://github.com/tenable/pedant
