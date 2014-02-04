@@ -29,7 +29,6 @@ class TestCall < Test::Unit::TestCase
 
   def test_keyword_prefix
     # We never want to have a function with the same name as a keyword.
-    fail_parse("if();")
     fail_parse("break();")
     fail_parse("continue();")
     fail_parse("else();")
@@ -40,6 +39,7 @@ class TestCall < Test::Unit::TestCase
     fail_parse("global_var();")
     fail_parse("if();")
     fail_parse("import();")
+    fail_parse("in();")
     fail_parse("include();")
     fail_parse("local_var();")
     fail_parse("repeat();")
@@ -56,7 +56,6 @@ class TestCall < Test::Unit::TestCase
     pass("x();")
 
     # Having a keyword at the start of a function name is perfectly valid.
-    pass("if_();")
     pass("break_();")
     pass("continue_();")
     pass("else_();")
@@ -67,6 +66,7 @@ class TestCall < Test::Unit::TestCase
     pass("global_var_();")
     pass("if_();")
     pass("import_();")
+    pass("in_();")
     pass("include_();")
     pass("local_var_();")
     pass("repeat_();")
