@@ -106,15 +106,74 @@ class TestFunction < Test::Unit::TestCase
     assert_equal(3, func.params.length)
 
     param = func.params[0]
-    assert(param.is_a? Nasl::Identifier)
-    assert_equal(param.name, 'a')
+    assert(param.is_a? Nasl::Parameter)
+    assert_equal(param.name.name, 'a')
+    assert_equal(param.pass_by, 'value')
 
     param = func.params[1]
-    assert(param.is_a? Nasl::Identifier)
-    assert_equal(param.name, 'b')
+    assert(param.is_a? Nasl::Parameter)
+    assert_equal(param.name.name, 'b')
+    assert_equal(param.pass_by, 'value')
 
     param = func.params[2]
-    assert(param.is_a? Nasl::Identifier)
-    assert_equal(param.name, 'c')
+    assert(param.is_a? Nasl::Parameter)
+    assert_equal(param.name.name, 'c')
+    assert_equal(param.pass_by, 'value')
+  end
+
+  def test_reference_args
+    tree = parse("function foo(&a, &b, &c) {}")
+    assert_not_nil(tree)
+
+    funcs = tree.all(:Function)
+    assert_not_nil(funcs)
+    assert_equal(1, funcs.length)
+
+    func = funcs.first
+    assert_not_nil(func)
+    assert_equal(3, func.params.length)
+
+    param = func.params[0]
+    assert(param.is_a? Nasl::Parameter)
+    assert_equal(param.name.name, 'a')
+    assert_equal(param.pass_by, 'reference')
+
+    param = func.params[1]
+    assert(param.is_a? Nasl::Parameter)
+    assert_equal(param.name.name, 'b')
+    assert_equal(param.pass_by, 'reference')
+
+    param = func.params[2]
+    assert(param.is_a? Nasl::Parameter)
+    assert_equal(param.name.name, 'c')
+    assert_equal(param.pass_by, 'reference')
+  end
+
+  def test_mixed_args
+    tree = parse("function foo(a, &b, c) {}")
+    assert_not_nil(tree)
+
+    funcs = tree.all(:Function)
+    assert_not_nil(funcs)
+    assert_equal(1, funcs.length)
+
+    func = funcs.first
+    assert_not_nil(func)
+    assert_equal(3, func.params.length)
+
+    param = func.params[0]
+    assert(param.is_a? Nasl::Parameter)
+    assert_equal(param.name.name, 'a')
+    assert_equal(param.pass_by, 'value')
+
+    param = func.params[1]
+    assert(param.is_a? Nasl::Parameter)
+    assert_equal(param.name.name, 'b')
+    assert_equal(param.pass_by, 'reference')
+
+    param = func.params[2]
+    assert(param.is_a? Nasl::Parameter)
+    assert_equal(param.name.name, 'c')
+    assert_equal(param.pass_by, 'value')
   end
 end

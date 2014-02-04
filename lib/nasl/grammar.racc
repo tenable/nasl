@@ -403,9 +403,15 @@ rule
              { [val[1]] }
              ;
 
-  params     : ident COMMA params
-             { [val[0]] + val[2] }
+  param      : AMPERSAND ident
+             { n(:Parameter, val[1], 'reference') }
              | ident
+             { n(:Parameter, val[0], 'value') }
+             ;
+
+  params     : param COMMA params
+             { [val[0]] + val[2] }
+             | param
              { [val[0]] }
              ;
 
@@ -479,6 +485,7 @@ require 'nasl/parser/integer'
 require 'nasl/parser/ip'
 require 'nasl/parser/local'
 require 'nasl/parser/lvalue'
+require 'nasl/parser/parameter'
 require 'nasl/parser/repeat'
 require 'nasl/parser/repetition'
 require 'nasl/parser/return'
