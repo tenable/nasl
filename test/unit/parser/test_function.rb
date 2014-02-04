@@ -26,4 +26,95 @@
 
 class TestFunction < Test::Unit::TestCase
   include Nasl::Test
+
+  def test_keyword_prefix
+    # We never want to have a function with the same name as a keyword.
+    fail_parse("function break() {}")
+    fail_parse("function continue() {}")
+    fail_parse("function else() {}")
+    fail_parse("function export() {}")
+    fail_parse("function for() {}")
+    fail_parse("function foreach() {}")
+    fail_parse("function function() {}")
+    fail_parse("function global_var() {}")
+    fail_parse("function if() {}")
+    fail_parse("function import() {}")
+    fail_parse("function in() {}")
+    fail_parse("function include() {}")
+    fail_parse("function local_var() {}")
+    fail_parse("function repeat() {}")
+    fail_parse("function return() {}")
+    fail_parse("function until() {}")
+    fail_parse("function while() {}")
+
+    # We never want to have a function with the same name as a constant.
+    fail_parse("function FALSE() {}")
+    fail_parse("function NULL() {}")
+    fail_parse("function TRUE() {}")
+
+    # X is an exception. It is a valid function name, despite being a keyword.
+    pass("function x() {}")
+
+    # Having a keyword at the start of a function name is perfectly valid.
+    pass("function break_() {}")
+    pass("function continue_() {}")
+    pass("function else_() {}")
+    pass("function export_() {}")
+    pass("function for_() {}")
+    pass("function foreach_() {}")
+    pass("function function_() {}")
+    pass("function global_var_() {}")
+    pass("function if_() {}")
+    pass("function import_() {}")
+    pass("function in_() {}")
+    pass("function include_() {}")
+    pass("function local_var_() {}")
+    pass("function repeat_() {}")
+    pass("function return_() {}")
+    pass("function until_() {}")
+    pass("function while_() {}")
+
+    # Having a constant at the start of a function name is perfectly valid.
+    pass("function FALSE_() {}")
+    pass("function NULL_() {}")
+    pass("function TRUE_() {}")
+  end
+
+  def test_no_args
+    tree = parse("function foo() {}")
+    assert_not_nil(tree)
+
+    funcs = tree.all(:Function)
+    assert_not_nil(funcs)
+    assert_equal(1, funcs.length)
+
+    func = funcs.first
+    assert_not_nil(func)
+    assert_equal(0, func.params.length)
+  end
+
+  def test_named_args
+    tree = parse("function foo(a, b, c) {}")
+    assert_not_nil(tree)
+
+    funcs = tree.all(:Function)
+    assert_not_nil(funcs)
+    assert_equal(1, funcs.length)
+
+    func = funcs.first
+    assert_not_nil(func)
+    assert_equal(3, func.params.length)
+
+    param = func.params[0]
+    assert(param.is_a? Nasl::Identifier)
+    assert_equal(param.name, 'a')
+
+    param = func.params[1]
+    assert(param.is_a? Nasl::Identifier)
+    assert_equal(param.name, 'b')
+
+    param = func.params[2]
+    assert(param.is_a? Nasl::Identifier)
+    assert_equal(param.name, 'c')
+  end
 end
