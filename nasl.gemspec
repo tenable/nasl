@@ -25,5 +25,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake'
 
   s.add_runtime_dependency 'builder', '>= 3.1.4'
-  s.add_runtime_dependency 'rainbow'
+  s.add_runtime_dependency 'rainbow', '>= 2.0.0'
 end

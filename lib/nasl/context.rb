@@ -86,18 +86,18 @@ module Nasl
       # no text to the left is at the start of the program.
       if outer.begin != inner.begin
         line = @code[outer.begin...inner.begin]
-        line = line.color(:green) if color
+        line = Rainbow(line).color(:green) if color
         ctx << line
       end
 
       # Create the text in the region.
       line = @code[inner.begin...inner.end]
-      line = line.color(:red) if color
+      line = Rainbow(line).color(:red) if color
       ctx << line
 
       # Create the text to the right of the region.
       line = @code[inner.end...outer.end].chomp
-      line = line.color(:green) if color
+      line = Rainbow(line).color(:green) if color
       ctx << line
 
       ctx << "\n"
