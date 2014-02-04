@@ -42,6 +42,7 @@ module Nasl
       'global_var' => :GLOBAL,
       'if'         => :IF,
       'import'     => :IMPORT,
+      'in'         => :IN,
       'include'    => :INCLUDE,
       'local_var'  => :LOCAL,
       'repeat'     => :REPEAT,
@@ -83,7 +84,6 @@ module Nasl
 
       ["|",    :BIT_OR],
       ["^",    :BIT_XOR],
-      ["&",    :BIT_AND],
       [">>>",  :BIT_SRA],
       [">>",   :BIT_SRL],
       ["<<",   :BIT_SLL],
@@ -113,7 +113,10 @@ module Nasl
       ["[",    :LBRACK],
       ["]",    :RBRACK],
       ["{",    :LBRACE],
-      ["}",    :RBRACE]
+      ["}",    :RBRACE],
+
+      ["&",    :AMPERSAND],
+      ["@",    :AT_SIGN]
     ]
 
     @@annotated = [
