@@ -24,22 +24,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/parser/node'
+class TestForeach < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  class Foreach < Node
-    attr_reader :body, :expr, :iter
+  def test_old
+    same(
+      %q|foreach foo (bar);|,
+      '<tree><foreach><identifier name="foo"/><lvalue><identifier name="bar"/></lvalue><empty/></foreach></tree>'
+    )
+  end
 
-    def initialize(tree, *tokens)
-      super
-
-      @iter = @tokens[0]
-      @expr = @tokens[1]
-      @body = @tokens[2]
-
-      @children << :iter
-      @children << :expr
-      @children << :body
-    end
+  def test_new
+    same(
+      %q|foreach (foo in bar);|,
+      '<tree><foreach><identifier name="foo"/><lvalue><identifier name="bar"/></lvalue><empty/></foreach></tree>'
+    )
   end
 end
