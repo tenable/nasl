@@ -81,7 +81,7 @@ class TestCall < Test::Unit::TestCase
   end
 
   def test_no_args
-    tree = parse("foo();")
+    tree = parse("foo[a][1]['b'][c+d].e.f.g();")
     assert_not_nil(tree)
 
     calls = tree.all(:Call)
@@ -94,7 +94,7 @@ class TestCall < Test::Unit::TestCase
   end
 
   def test_anonymous_args
-    tree = parse("foo(1, '2', three);")
+    tree = parse("foo[a][1]['b'][c+d].e.f.g(1, '2', three);")
     assert_not_nil(tree)
 
     calls = tree.all(:Call)
@@ -119,7 +119,7 @@ class TestCall < Test::Unit::TestCase
   end
 
   def test_named_args
-    tree = parse("foo(a:1, b:'2', c:three);")
+    tree = parse("foo[a][1]['b'][c+d].e.f.g(a:1, b:'2', c:three);")
     assert_not_nil(tree)
 
     calls = tree.all(:Call)
@@ -150,7 +150,7 @@ class TestCall < Test::Unit::TestCase
   end
 
   def test_mixed_args
-    tree = parse("foo(a:1, '2', c:three, bar());")
+    tree = parse("foo[a][1]['b'][c+d].e.f.g(a:1, '2', c:three, bar());")
     assert_not_nil(tree)
 
     calls = tree.all(:Call)

@@ -266,9 +266,9 @@ rule
              { n(:Assignment, *val) }
              ;
 
-  call_exp   : ident LPAREN args RPAREN
+  call_exp   : lval LPAREN args RPAREN
              { n(:Call, *val) }
-             | ident LPAREN RPAREN
+             | lval LPAREN RPAREN
              { n(:Call, *val) }
              ;
 

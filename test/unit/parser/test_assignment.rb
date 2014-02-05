@@ -56,7 +56,7 @@ class TestAssignment < Test::Unit::TestCase
   def test_function
     same(
       "q = foo();",
-      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><call><identifier name="foo"/></call></assignment></tree>'
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><call><lvalue><identifier name="foo"/></lvalue></call></assignment></tree>'
     )
   end
 
@@ -108,11 +108,11 @@ class TestAssignment < Test::Unit::TestCase
   def test_conditional
     same(
       "if (q = foo());",
-      '<tree><if><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><call><identifier name="foo"/></call></assignment><empty/></if></tree>'
+      '<tree><if><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><call><lvalue><identifier name="foo"/></lvalue></call></assignment><empty/></if></tree>'
     )
     same(
       "while (q = foo());",
-      '<tree><while><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><call><identifier name="foo"/></call></assignment><empty/></while></tree>'
+      '<tree><while><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><call><lvalue><identifier name="foo"/></lvalue></call></assignment><empty/></while></tree>'
     )
   end
 end

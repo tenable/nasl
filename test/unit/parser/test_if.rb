@@ -74,12 +74,12 @@ class TestIf < Test::Unit::TestCase
     # else problem. The else should be attached to the nearest unterminated If.
     same(
       %q|if (1) if (1) foo(); else bar();|,
-      '<tree><if><integer value="1"/><if><integer value="1"/><call><identifier name="foo"/></call><call><identifier name="bar"/></call></if></if></tree>'
+      '<tree><if><integer value="1"/><if><integer value="1"/><call><lvalue><identifier name="foo"/></lvalue></call><call><lvalue><identifier name="bar"/></lvalue></call></if></if></tree>'
     )
 
     diff(
       %q|if (1) if (1) foo(); else bar();|,
-      '<tree><if><integer value="1"/><if><integer value="1"/><call><identifier name="foo"/></call></if><call><identifier name="bar"/></call></if></tree>'
+      '<tree><if><integer value="1"/><if><integer value="1"/><call><lvalue><identifier name="foo"/></lvalue></call></if><call><identifier name="bar"/></call></if></tree>'
     )
   end
 end
