@@ -46,6 +46,7 @@ class TestExpressions < Test::Unit::TestCase
 
   def test_bitwise
     pass("q = 0 | 1;")
+    pass("q = 0 & 1;")
   end
 
   def test_precedence
