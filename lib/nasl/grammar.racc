@@ -174,7 +174,7 @@ rule
              { n(:Empty, *val) }
              ;
 
-  global     : GLOBAL idents SEMICOLON
+  global     : GLOBAL var_decls SEMICOLON
              { n(:Global, *val) }
              ;
 
@@ -190,7 +190,7 @@ rule
              { n(:Include, *val) }
              ;
 
-  local      : LOCAL idents SEMICOLON
+  local      : LOCAL var_decls SEMICOLON
              { n(:Local, *val) }
              ;
 
@@ -406,12 +406,6 @@ rule
              { nil }
              ;
 
-  idents     : ident COMMA idents
-             { [val[0]] + val[2] }
-             | ident
-             { [val[0]] }
-             ;
-
   indexes    : LBRACK expr RBRACK indexes
              { [val[1]] + val[3] }
              | LBRACK expr RBRACK
@@ -433,6 +427,20 @@ rule
   statements : statement statements
              { [val[0]] + val[1] }
              | statement
+             { [val[0]] }
+             ;
+
+  var_decl   : ident ASS_EQ expr
+             { n(:Assignment, *val) }
+             | ident ASS_EQ ref
+             { n(:Assignment, *val) }
+             | ident
+             { val[0] }
+             ;
+
+  var_decls  : var_decl COMMA var_decls
+             { [val[0]] + val[2] }
+             | var_decl
              { [val[0]] }
              ;
 
