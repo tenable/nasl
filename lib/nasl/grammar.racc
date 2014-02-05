@@ -200,6 +200,8 @@ rule
 
   return     : RETURN expr SEMICOLON
              { n(:Return, *val) }
+             | RETURN ref SEMICOLON
+             { n(:Return, *val) }
              | RETURN SEMICOLON
              { n(:Return, *val) }
              ;
@@ -243,6 +245,8 @@ rule
   ##############################################################################
 
   assign_exp : lval ASS_EQ expr
+             { n(:Assignment, *val) }
+             | lval ASS_EQ ref
              { n(:Assignment, *val) }
              | lval ADD_EQ expr
              { n(:Assignment, *val) }
@@ -362,7 +366,11 @@ rule
 
   arg        : ident COLON expr
              { n(:Argument, *val) }
+             | ident COLON ref
+             { n(:Argument, *val) }
              | expr
+             { n(:Argument, *val) }
+             | ref
              { n(:Argument, *val) }
              ;
 
@@ -370,6 +378,10 @@ rule
              { n(:Lvalue, *val) }
              | ident
              { n(:Lvalue, *val) }
+             ;
+
+  ref        : AT_SIGN ident
+             { n(:Reference, val[1]) }
              ;
 
   ##############################################################################
@@ -489,6 +501,7 @@ require 'nasl/parser/ip'
 require 'nasl/parser/local'
 require 'nasl/parser/lvalue'
 require 'nasl/parser/parameter'
+require 'nasl/parser/reference'
 require 'nasl/parser/repeat'
 require 'nasl/parser/repetition'
 require 'nasl/parser/return'

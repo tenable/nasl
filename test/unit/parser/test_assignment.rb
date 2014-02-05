@@ -60,6 +60,13 @@ class TestAssignment < Test::Unit::TestCase
     )
   end
 
+  def test_reference
+    same(
+      "q = @foo;",
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><reference><identifier name="foo"/></reference></assignment></tree>'
+    )
+  end
+
   def test_chain
     same(
       'b = a = 0;',
