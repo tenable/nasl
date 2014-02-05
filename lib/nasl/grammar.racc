@@ -33,7 +33,7 @@ preclow
   left CMP_LT CMP_GT CMP_EQ CMP_NE CMP_GE CMP_LE SUBSTR_EQ SUBSTR_NE REGEX_EQ REGEX_NE
   left BIT_OR
   left BIT_XOR
-  left BIT_AND
+  left AMPERSAND
   left BIT_SRA BIT_SRL BIT_SLL
   left ADD SUB
   left MUL DIV MOD
@@ -301,7 +301,7 @@ rule
              { n(:Expression, *val) }
              | expr MOD expr
              { n(:Expression, *val) }
-             | expr BIT_AND expr
+             | expr AMPERSAND expr
              { n(:Expression, *val) }
              | expr BIT_XOR expr
              { n(:Expression, *val) }
