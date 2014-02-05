@@ -264,6 +264,7 @@ rule
              { n(:Call, *val) }
              | ident LPAREN RPAREN
              { n(:Call, *val) }
+             ;
 
   decr_exp   : DECR lval
              { n(:Decrement, val[0]) }
