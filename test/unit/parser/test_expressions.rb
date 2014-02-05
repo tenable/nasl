@@ -49,6 +49,12 @@ class TestExpressions < Test::Unit::TestCase
     pass("q = 0 & 1;")
   end
 
+  def test_period
+    pass("q = a.b;")
+    pass("q = a._;")
+    fail_parse("q = a.1");
+  end
+
   def test_precedence
     same(
       'q = a + b / c + d;',

@@ -406,10 +406,16 @@ rule
              { nil }
              ;
 
-  indexes    : LBRACK expr RBRACK indexes
-             { [val[1]] + val[3] }
-             | LBRACK expr RBRACK
-             { [val[1]] }
+  index      : LBRACK expr RBRACK
+             { val[1] }
+             | PERIOD ident
+             { val[1] }
+             ;
+
+  indexes    : index indexes
+             { [val[0]] + val[1] }
+             | index
+             { [val[0]] }
              ;
 
   param      : AMPERSAND ident
