@@ -73,7 +73,7 @@ module Nasl
 
           # Handle objects that are arrays holding nodes, or basic types that
           # aren't nodes.
-          if obj.is_a? Array
+          if obj.is_a? ::Array
             obj.each { |el| el.to_xml(xml) }
           elsif obj.is_a? Node
             obj.to_xml(xml)

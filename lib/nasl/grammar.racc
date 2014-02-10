@@ -360,6 +360,8 @@ rule
              { val[0] }
              | list_expr
              { val[0] }
+             | array_expr
+             { val[0] }
              ;
 
   ##############################################################################
@@ -374,6 +376,22 @@ rule
              { n(:Argument, *val) }
              | ref
              { n(:Argument, *val) }
+             ;
+
+  kv_pair    : string COLON expr
+             { n(:KeyValuePair, *val) }
+             | int COLON expr
+             { n(:KeyValuePair, *val) }
+             | string COLON ref
+             { n(:KeyValuePair, *val) }
+             | int COLON ref
+             { n(:KeyValuePair, *val) }
+             ;
+
+  kv_pairs   : kv_pair COMMA kv_pairs
+             { [val[0]] + val[2] }
+             | kv_pair
+             { [val[0]] }
              ;
 
   lval       : ident indexes
@@ -394,6 +412,12 @@ rule
              { [val[0]] + val[2] }
              | arg
              { [val[0]] }
+             ;
+
+  array_expr : LBRACE kv_pairs RBRACE
+             { n(:Array, *val) }
+             | LBRACE RBRACE
+             { n(:Array, *val) }
              ;
 
   field      : assign_exp
@@ -511,6 +535,7 @@ end
 require 'nasl/parser/tree'
 
 require 'nasl/parser/argument'
+require 'nasl/parser/array'
 require 'nasl/parser/assigment'
 require 'nasl/parser/block'
 require 'nasl/parser/break'
@@ -532,6 +557,7 @@ require 'nasl/parser/include'
 require 'nasl/parser/increment'
 require 'nasl/parser/integer'
 require 'nasl/parser/ip'
+require 'nasl/parser/key_value_pair'
 require 'nasl/parser/list'
 require 'nasl/parser/local'
 require 'nasl/parser/lvalue'

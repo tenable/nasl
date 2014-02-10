@@ -147,4 +147,36 @@ class TestAssignment < Test::Unit::TestCase
       '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><expression><op>+</op><list></list><list></list></expression></assignment></tree>'
     )
   end
+
+  def test_array
+    same(
+      "q = {};",
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><array></array></assignment></tree>'
+    )
+
+    same(
+      "q = {'a':{'b':{}}, 'c':{'d':{}}, 'e':{'f':{}}};",
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><array><key_value_pair><data>a</data><array><key_value_pair><data>b</data><array></array></key_value_pair></array></key_value_pair><key_value_pair><data>c</data><array><key_value_pair><data>d</data><array></array></key_value_pair></array></key_value_pair><key_value_pair><data>e</data><array><key_value_pair><data>f</data><array></array></key_value_pair></array></key_value_pair></array></assignment></tree>'
+    )
+
+    same(
+      'q = {"a":1};',
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><array><key_value_pair><string>a</string><integer value="1"/></key_value_pair></array></assignment></tree>'
+    )
+
+    same(
+      "q = {1:1, 2:'b', 3:foo()};",
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><array><key_value_pair><integer value="1"/><integer value="1"/></key_value_pair><key_value_pair><integer value="2"/><data>b</data></key_value_pair><key_value_pair><integer value="3"/><call><lvalue><identifier name="foo"/></lvalue></call></key_value_pair></array></assignment></tree>'
+    )
+
+    same(
+      "foo(arg:{1:1});",
+      '<tree><call><lvalue><identifier name="foo"/></lvalue><argument type="named"><identifier name="arg"/><array><key_value_pair><integer value="1"/><integer value="1"/></key_value_pair></array></argument></call></tree>'
+    )
+
+    same(
+      "q = {} + {};",
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><expression><op>+</op><array></array><array></array></expression></assignment></tree>'
+    )
+  end
 end

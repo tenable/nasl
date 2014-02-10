@@ -27,7 +27,7 @@
 require 'builder'
 
 module Nasl
-  class Tree < Array
+  class Tree < ::Array
     def all(cls)
       (@all[Nasl.const_get(cls).to_s] ||= [])
     end

@@ -27,15 +27,25 @@
 require 'nasl/parser/node'
 
 module Nasl
-  class List < Node
-    attr_reader :elems
+  class Array < Node
+    attr_reader :keys, :pairs
 
     def initialize(tree, *tokens)
       super
 
-      @elems = if @tokens[1].is_a? ::Array then @tokens[1] else [] end
+      @pairs = if @tokens[1].is_a? ::Array then @tokens[1] else [] end
 
-      @children << :elems
+      @keys = Hash[@pairs.map do |p|
+        if p.key.is_a? String
+          k = p.key.text
+        else
+          k = p.key.value
+        end
+
+        [k, p.value]
+      end]
+
+      @children << :pairs
     end
   end
 end

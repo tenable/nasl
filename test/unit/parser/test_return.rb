@@ -30,14 +30,18 @@ class TestReturn < Test::Unit::TestCase
   def test_blank
     fail_parse(%q|return()|)
     fail_parse(%q|return();|)
+    fail_parse(%q|return[]|)
     fail_parse(%q|return{}|)
-    fail_parse(%q|return{};|)
     fail_parse(%q|return ()|)
     fail_parse(%q|return ();|)
+    fail_parse(%q|return []|)
     fail_parse(%q|return {}|)
-    fail_parse(%q|return {};|)
 
     pass(%q|return;|)
+    pass(%q|return[];|)
+    pass(%q|return [];|)
+    pass(%q|return{};|)
+    pass(%q|return {};|)
   end
 
   def test_expression
