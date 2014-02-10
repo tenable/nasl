@@ -28,6 +28,7 @@ require 'nasl/parser/node'
 
 module Nasl
   class String < Node
+    include Comparable
     attr_reader :text, :type
 
     def initialize(tree, *tokens)
@@ -35,6 +36,10 @@ module Nasl
 
       @text = @tokens.first.body
       @type = @tokens.first.type
+    end
+
+    def <=>(other)
+      self.text <=> other.text
     end
 
     def to_xml(xml)

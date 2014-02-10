@@ -28,6 +28,7 @@ require 'nasl/parser/node'
 
 module Nasl
   class Integer < Node
+    include Comparable
     attr_reader :base, :value
 
     def initialize(tree, *tokens)
@@ -54,6 +55,10 @@ module Nasl
                else
                  @tokens.first.body.to_i(@base)
                end
+    end
+
+    def <=>(other)
+      self.value <=> other.value
     end
 
     def to_xml(xml)

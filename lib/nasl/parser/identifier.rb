@@ -28,12 +28,17 @@ require 'nasl/parser/node'
 
 module Nasl
   class Identifier < Node
+    include Comparable
     attr_reader :name
 
     def initialize(tree, *tokens)
       super
 
       @name = @tokens.first.body
+    end
+
+    def <=>(other)
+      self.name <=> other.name
     end
 
     def to_xml(xml)
