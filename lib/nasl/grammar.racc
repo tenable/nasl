@@ -358,6 +358,8 @@ rule
              { val[0] }
              | undef
              { val[0] }
+             | list_expr
+             { val[0] }
              ;
 
   ##############################################################################
@@ -416,6 +418,24 @@ rule
              { [val[0]] + val[1] }
              | index
              { [val[0]] }
+             ;
+
+  list_elem  : expr
+             { val[0] }
+             | ref
+             { val[0] }
+             ;
+
+  list_elems : list_elem COMMA list_elems
+             { [val[0]] + val[2] }
+             | list_elem
+             { [val[0]] }
+             ;
+
+  list_expr  : LBRACK list_elems RBRACK
+             { n(:List, *val) }
+             | LBRACK RBRACK
+             { n(:List, *val) }
              ;
 
   param      : AMPERSAND ident
@@ -512,6 +532,7 @@ require 'nasl/parser/include'
 require 'nasl/parser/increment'
 require 'nasl/parser/integer'
 require 'nasl/parser/ip'
+require 'nasl/parser/list'
 require 'nasl/parser/local'
 require 'nasl/parser/lvalue'
 require 'nasl/parser/parameter'

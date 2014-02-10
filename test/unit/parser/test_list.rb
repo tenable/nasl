@@ -24,26 +24,19 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/parser/node'
+class TestList < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  class Call < Node
-    attr_reader :arg, :args, :name
+  def test_empty
+    tree = parse("foo = [];")
+    assert_not_nil(tree)
 
-    def initialize(tree, *tokens)
-      super
+    lists = tree.all(:List)
+    assert_not_nil(lists)
+    assert_equal(1, lists.length)
 
-      @name = @tokens[0]
-
-      @args = if @tokens[2].is_a? Array then @tokens[2] else [] end
-
-      @arg = {}
-      @args.select { |a| a.type == :named }.each do |a|
-        @arg[a.name.name] = a.expr
-      end
-
-      @children << :name
-      @children << :args
-    end
+    list = lists.first
+    assert_not_nil(list)
+    assert_equal(0, list.elems.length)
   end
 end

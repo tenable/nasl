@@ -115,4 +115,36 @@ class TestAssignment < Test::Unit::TestCase
       '<tree><while><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><call><lvalue><identifier name="foo"/></lvalue></call></assignment><empty/></while></tree>'
     )
   end
+
+  def test_list
+    same(
+      "q = [];",
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><list></list></assignment></tree>'
+    )
+
+    same(
+      "q = [[[]], [[]], [[]]];",
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><list><list><list></list></list><list><list></list></list><list><list></list></list></list></assignment></tree>'
+    )
+
+    same(
+      "q = [1];",
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><list><integer value="1"/></list></assignment></tree>'
+    )
+
+    same(
+      "q = [1, 'b', foo()];",
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><list><integer value="1"/><data>b</data><call><lvalue><identifier name="foo"/></lvalue></call></list></assignment></tree>'
+    )
+
+    same(
+      "foo(arg:[1]);",
+      '<tree><call><lvalue><identifier name="foo"/></lvalue><argument type="named"><identifier name="arg"/><list><integer value="1"/></list></argument></call></tree>'
+    )
+
+    same(
+      "q = [] + [];",
+      '<tree><assignment><op>=</op><lvalue><identifier name="q"/></lvalue><expression><op>+</op><list></list><list></list></expression></assignment></tree>'
+    )
+  end
 end

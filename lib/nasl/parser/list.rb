@@ -27,23 +27,15 @@
 require 'nasl/parser/node'
 
 module Nasl
-  class Call < Node
-    attr_reader :arg, :args, :name
+  class List < Node
+    attr_reader :elems
 
     def initialize(tree, *tokens)
       super
 
-      @name = @tokens[0]
+      @elems = if @tokens[1].is_a? Array then @tokens[1] else [] end
 
-      @args = if @tokens[2].is_a? Array then @tokens[2] else [] end
-
-      @arg = {}
-      @args.select { |a| a.type == :named }.each do |a|
-        @arg[a.name.name] = a.expr
-      end
-
-      @children << :name
-      @children << :args
+      @children << :elems
     end
   end
 end
