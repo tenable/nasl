@@ -502,6 +502,8 @@ rule
              { n(:Identifier, *val) }
              | REP
              { n(:Identifier, *val) }
+             | IN
+             { n(:Identifier, *val) }
              ;
 
   int        : INT_DEC

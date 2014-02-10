@@ -39,7 +39,6 @@ class TestCall < Test::Unit::TestCase
     fail_parse("global_var();")
     fail_parse("if();")
     fail_parse("import();")
-    fail_parse("in();")
     fail_parse("include();")
     fail_parse("local_var();")
     fail_parse("repeat();")
@@ -52,7 +51,8 @@ class TestCall < Test::Unit::TestCase
     fail_parse("NULL();")
     fail_parse("TRUE();")
 
-    # X is an exception. It is a valid function name, despite being a keyword.
+    # 'in' and 'x' are exceptions. They are valid function names, despite being a keywords.
+    pass("in();")
     pass("x();")
 
     # Having a keyword at the start of a function name is perfectly valid.
@@ -66,7 +66,6 @@ class TestCall < Test::Unit::TestCase
     pass("global_var_();")
     pass("if_();")
     pass("import_();")
-    pass("in_();")
     pass("include_();")
     pass("local_var_();")
     pass("repeat_();")

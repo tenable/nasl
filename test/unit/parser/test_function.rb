@@ -39,7 +39,6 @@ class TestFunction < Test::Unit::TestCase
     fail_parse("function global_var() {}")
     fail_parse("function if() {}")
     fail_parse("function import() {}")
-    fail_parse("function in() {}")
     fail_parse("function include() {}")
     fail_parse("function local_var() {}")
     fail_parse("function repeat() {}")
@@ -52,7 +51,8 @@ class TestFunction < Test::Unit::TestCase
     fail_parse("function NULL() {}")
     fail_parse("function TRUE() {}")
 
-    # X is an exception. It is a valid function name, despite being a keyword.
+    # 'in' and 'x' are exceptions. They are valid function names, despite being a keywords.
+    pass("function in() {}")
     pass("function x() {}")
 
     # Having a keyword at the start of a function name is perfectly valid.
@@ -66,7 +66,6 @@ class TestFunction < Test::Unit::TestCase
     pass("function global_var_() {}")
     pass("function if_() {}")
     pass("function import_() {}")
-    pass("function in_() {}")
     pass("function include_() {}")
     pass("function local_var_() {}")
     pass("function repeat_() {}")
