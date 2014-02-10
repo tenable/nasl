@@ -105,7 +105,7 @@ class TestArray < Test::Unit::TestCase
     assert_equal(pair.value, array.keys['c'])
   end
 
-  def test_string
+  def test_mixed
     tree = parse(%q|foo = {'a':1, 2:"b"};|)
     assert_not_nil(tree)
 
