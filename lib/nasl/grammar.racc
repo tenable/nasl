@@ -390,6 +390,8 @@ rule
 
   kv_pairs   : kv_pair COMMA kv_pairs
              { [val[0]] + val[2] }
+             | kv_pair COMMA
+             { [val[0]] }
              | kv_pair
              { [val[0]] }
              ;

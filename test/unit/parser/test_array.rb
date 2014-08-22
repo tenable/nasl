@@ -133,4 +133,42 @@ class TestArray < Test::Unit::TestCase
     assert_equal('b', pair.value.text)
     assert_equal(pair.value, array.keys[2])
   end
+
+  # A single trailing comma in an array literal is valid, but multiple is not.
+  def test_single_trailing_comma
+    tree = parse(%q|foo = {'a':1, 2:"b",};|)
+    assert_not_nil(tree)
+
+    arrays = tree.all(:Array)
+    assert_not_nil(arrays)
+    assert_equal(1, arrays.length)
+
+    array = arrays.first
+    assert_not_nil(array)
+    assert_equal(2, array.pairs.length)
+
+    pair = array.pairs[0]
+    assert(pair.key.is_a? Nasl::String)
+    assert_equal(:DATA, pair.key.type)
+    assert_equal('a', pair.key.text)
+    assert(pair.value.is_a? Nasl::Integer)
+    assert_equal(1, pair.value.value)
+    assert_equal(pair.value, array.keys['a'])
+
+    pair = array.pairs[1]
+    assert(pair.key.is_a? Nasl::Integer)
+    assert_equal(2, pair.key.value)
+    assert(pair.value.is_a? Nasl::String)
+    assert_equal(:STRING, pair.value.type)
+    assert_equal('b', pair.value.text)
+    assert_equal(pair.value, array.keys[2])
+  end
+
+  def test_multiple_trailing_comma
+    fail_parse(%q|foo = {'a':1, 2:"b",,};|)
+  end
+
+  def test_empty_array_with_comma
+    fail_parse(%q|return {,};|)
+  end
 end
