@@ -1,25 +1,21 @@
-Installation
-============
+# Installation
 
-Git
----
+## Git
 
 Installing the source from Git is done as follows:
 
     git clone git://github.com/tenable/nasl.git
 
-Gem
----
+## Gem
+
 
 Installing the package from RubyGems is done as follows:
 
     gem install nasl
 
-Usage
-=====
+# Usage
 
-Standalone
-----------
+## Standalone
 
 To avoid conflicting with the NASL interpreter, the NASL gem's binary is
 installed as `nasl-parse`. As an application, it has very few actions that it
@@ -89,8 +85,7 @@ can perform.
         ...
         -------------------------[ ssl_certificate_chain.nasl ]-------------------------
 
-Library
--------
+# Library
 
 The primary users of this gem are [Pedant][pedant] and [Nasldoc][nasldoc]. Other
 uses are encouraged, of course! The `Parser` class is the most useful part,
