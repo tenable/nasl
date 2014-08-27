@@ -36,8 +36,6 @@ Gem::Specification.new do |s|
   s.license     = 'BSD'
   s.homepage    = 'http://github.com/tenable/nasl'
   s.summary     = 'A language parser for the Nessus Attack Scripting Language.'
-  s.description = 'A language parser for the Nessus Attack Scripting Language.'
-
   s.authors     = ['Mak Kolybabi', 'Alex Weber', 'Jacob Hammack']
   s.email       = ['mak@kolybabi.com', 'aweber@tenble.com', 'jhammack@tenable.com']
 
