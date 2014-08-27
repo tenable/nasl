@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
   s.description = 'A language parser for the Nessus Attack Scripting Language.'
 
   s.authors     = ['Mak Kolybabi', 'Alex Weber', 'Jacob Hammack']
-  s.email       = ['mak@kolybabi.com', 'aweber@tenble.com', 'jhammack@tenable.com']]
+  s.email       = ['mak@kolybabi.com', 'aweber@tenble.com', 'jhammack@tenable.com']
 
   s.rubyforge_project = 'nasl'
 
