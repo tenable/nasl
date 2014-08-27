@@ -50,4 +50,16 @@ task :build => :compile do
   system "gem build nasl.gemspec"
 end
 
+task :tag_and_bag do
+	system "git tag -a v#{Nasl::VERSION} -m 'version #{Nasl::VERSION}'"
+	system "git push --tags"
+	system "git checkout master"
+	#system "git merge #{Nasl::VERSION}"
+	system "git push"
+end
+
+task :release => [:tag_and_bag, :build] do
+ 	system "gem push #{Nasl::APP_NAME}-#{Nasl::VERSION}.gem"
+end
+
 task :default => :compile
