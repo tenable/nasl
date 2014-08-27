@@ -1,4 +1,6 @@
-source 'http://rubygems.org'
+source "https://rubygems.org"
 
-# Specify your gem's dependencies in nasl.gemspec
-gemspec
+gem "racc", '1.4'
+gem "rake", '10.1'
+gem "builder", '3.1'
+gem "rainbow", '2.0'
