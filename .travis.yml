@@ -1,0 +1,18 @@
+language: ruby
+
+rvm: 
+  - 1.9.3
+  - 2.0.0
+  - 2.1.0
+
+gemfile:
+  - Gemfile.ci
+
+notifications:
+  email:
+    - jhammack@tenable.com
+    - aweber@tenable.com
+
+before_install:
+  - gem --version
+
