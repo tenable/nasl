@@ -54,7 +54,7 @@ task :tag_and_bag do
 	system "git tag -a v#{Nasl::VERSION} -m 'version #{Nasl::VERSION}'"
 	system "git push --tags"
 	system "git checkout master"
-	#system "git merge #{Nasl::VERSION}"
+	system "git merge #{Nasl::VERSION}"
 	system "git push"
 end
 
