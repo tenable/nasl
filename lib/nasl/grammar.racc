@@ -195,7 +195,7 @@ rule
              ;
 
   rep        : call_exp REP expr SEMICOLON
-             { n(:Repetition, n(:Call, val[0]), *val[1..-1]) }
+             { n(:Repetition, *val[0..-1]) }
              ;
 
   return     : RETURN expr SEMICOLON
