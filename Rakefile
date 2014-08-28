@@ -59,7 +59,7 @@ task :tag_and_bag do
 end
 
 task :release => [:tag_and_bag, :build] do
- 	system "gem push #{Nasl::APP_NAME}-#{Nasl::VERSION}.gem"
+ 	system "gem push nasl-#{Nasl::VERSION}.gem"
 end
 
 task :default => :compile
