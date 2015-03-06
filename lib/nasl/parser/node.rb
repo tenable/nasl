@@ -48,7 +48,7 @@ module Nasl
     end
 
     def region
-      @tokens.flatten.first.region.begin..@tokens.flatten.last.region.end
+      @tokens.flatten.first.region.begin...@tokens.flatten.last.region.end
     end
 
     def to_xml(xml)
