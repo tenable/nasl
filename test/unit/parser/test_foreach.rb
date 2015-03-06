@@ -40,4 +40,13 @@ class TestForeach < Test::Unit::TestCase
       '<tree><foreach><identifier name="foo"/><lvalue><identifier name="bar"/></lvalue><empty/></foreach></tree>'
     )
   end
+
+  # Check that the 'foreach' itself is in the tokens list
+  def test_foreach_in_tokens
+    tree = parse(%q|foreach foo (bar);|)
+    assert_equal(
+      tree.all(:Foreach).first.tokens.first.to_s,
+      "foreach"
+    )
+  end
 end

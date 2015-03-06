@@ -24,71 +24,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-class TestIf < Test::Unit::TestCase
+class TestWhile < Test::Unit::TestCase
   include Nasl::Test
 
-  def test_number
-    pass(%q|if (-1);|)
-    pass(%q|if (0);|)
-    pass(%q|if (1);|)
-  end
-
-  def test_assigment
-    pass(%q|if (q = 1);|)
-  end
-
-  def test_call
-    pass(%q|if (foo());|)
-  end
-
-  def test_constant
-    pass(%q|if (FALSE);|)
-    pass(%q|if (NULL);|)
-    pass(%q|if (TRUE);|)
-  end
-
-  def test_string
-    pass(%q|if ('');|)
-    pass(%q|if ('foo');|)
-    pass(%q|if ("");|)
-    pass(%q|if ("foo");|)
-  end
-
-  def test_simple
-    pass(%q|if (1);|)
-    pass(%q|if (1) foo();|)
-  end
-
-  def test_compound
-    pass(%q|if (1) {}|)
-    pass(%q|if (1) {foo();}|)
-  end
-
-  def test_nested
-    pass(%q|if (1) if (1) foo();|)
-    pass(%q|if (1) if (1) {foo();}|)
-  end
-
-  def test_dangling
-    # This is the correct way to parse the ambiguity presented by the dangling
-    # else problem. The else should be attached to the nearest unterminated If.
-    same(
-      %q|if (1) if (1) foo(); else bar();|,
-      '<tree><if><integer value="1"/><if><integer value="1"/><call><lvalue><identifier name="foo"/></lvalue></call><call><lvalue><identifier name="bar"/></lvalue></call></if></if></tree>'
-    )
-
-    diff(
-      %q|if (1) if (1) foo(); else bar();|,
-      '<tree><if><integer value="1"/><if><integer value="1"/><call><lvalue><identifier name="foo"/></lvalue></call></if><call><identifier name="bar"/></call></if></tree>'
-    )
-  end
-
-  # Check that the 'if' itself is in the tokens list
-  def test_if_in_tokens
-    tree = parse(%q|if (foo) {};|)
+  # Check that the 'while' itself is in the tokens list
+  def test_while_in_tokens
+    tree = parse(%q|while (foo) {}|)
     assert_equal(
-      tree.all(:If).first.tokens.first.to_s,
-      "if"
+      tree.all(:While).first.tokens.first.to_s,
+      "while"
     )
   end
 end

@@ -33,9 +33,9 @@ module Nasl
     def initialize(tree, *tokens)
       super
 
-      @iter = @tokens[0]
-      @expr = @tokens[1]
-      @body = @tokens[2]
+      @iter = @tokens[1]
+      @expr = @tokens[2]
+      @body = @tokens[3]
 
       @children << :iter
       @children << :expr

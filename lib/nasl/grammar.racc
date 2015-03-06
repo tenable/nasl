@@ -221,9 +221,9 @@ rule
              ;
 
   foreach    : FOREACH ident LPAREN expr RPAREN statement
-             { n(:Foreach, val[1], val[3], val[5]) }
+             { n(:Foreach, val[0], val[1], val[3], val[5]) }
              | FOREACH LPAREN ident IN expr RPAREN statement
-             { n(:Foreach, val[2], val[4], val[6]) }
+             { n(:Foreach, val[0], val[2], val[4], val[6]) }
              ;
 
   if         : IF LPAREN expr RPAREN statement
