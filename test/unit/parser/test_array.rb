@@ -171,4 +171,10 @@ class TestArray < Test::Unit::TestCase
   def test_empty_array_with_comma
     fail_parse(%q|return {,};|)
   end
+
+  def test_array_keys_with_and_without_quotes
+    tree1 = parse(%q|foo = {"a":1, 2:"b",};|).to_s
+    tree2 = parse(%q|foo = {a:1, 2:"b",};|).to_s
+    assert_equal(tree1, tree2)
+  end
 end

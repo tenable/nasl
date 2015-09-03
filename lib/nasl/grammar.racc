@@ -382,6 +382,8 @@ rule
              { n(:KeyValuePair, *val) }
              | int COLON expr
              { n(:KeyValuePair, *val) }
+             | ident COLON expr
+             { n(:KeyValuePair, *val) }
              | string COLON ref
              { n(:KeyValuePair, *val) }
              | int COLON ref

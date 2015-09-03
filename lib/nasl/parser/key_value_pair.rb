@@ -25,6 +25,7 @@
 ################################################################################
 
 require 'nasl/parser/node'
+require 'ostruct'
 
 module Nasl
   class KeyValuePair < Node
@@ -33,6 +34,12 @@ module Nasl
     def initialize(tree, *tokens)
       super
 
+      # Keys in arrays can be an unquoted or quoted. When unquoted they follow
+      # the rules for Identifiers. Internally they're both just Strings, so we
+      # convert the Identifier's name to a String to make access consistent.
+      if tokens[0].is_a? Identifier
+        tokens[0] = Nasl::String.new(tree, OpenStruct.new(type: :STRING, body: tokens[0].name))
+      end
       @key = tokens[0]
       @value = tokens[2]
 
