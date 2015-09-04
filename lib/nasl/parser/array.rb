@@ -38,6 +38,8 @@ module Nasl
       @keys = Hash[@pairs.map do |p|
         if p.key.is_a? String
           k = p.key.text
+        elsif p.key.is_a? Identifier
+          k = p.key.name
         else
           k = p.key.value
         end

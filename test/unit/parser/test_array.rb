@@ -171,4 +171,8 @@ class TestArray < Test::Unit::TestCase
   def test_empty_array_with_comma
     fail_parse(%q|return {,};|)
   end
+
+  def test_array_with_unquoted_key
+    parse(%q|return {a:@foo, b:"hello", c:3};|)
+  end
 end
