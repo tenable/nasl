@@ -176,5 +176,9 @@ class TestArray < Test::Unit::TestCase
     tree1 = parse(%q|foo = {"a":1, 2:"b",};|).to_s
     tree2 = parse(%q|foo = {a:1, 2:"b",};|).to_s
     assert_equal(tree1, tree2)
+
+    tree1 = parse(%q|foo = {"a":@foo, 2:"b",};|).to_s
+    tree2 = parse(%q|foo = {a:@foo, 2:"b",};|).to_s
+    assert_equal(tree1, tree2)
   end
 end

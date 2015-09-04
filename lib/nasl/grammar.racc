@@ -388,6 +388,8 @@ rule
              { n(:KeyValuePair, *val) }
              | int COLON ref
              { n(:KeyValuePair, *val) }
+             | ident COLON ref
+             { n(:KeyValuePair, *val) }
              ;
 
   kv_pairs   : kv_pair COMMA kv_pairs
