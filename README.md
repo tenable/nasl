@@ -1,6 +1,7 @@
 # Installation
 
 [![Gem Version](http://img.shields.io/gem/v/nasl.svg?style=flat-square)](https://rubygems.org/gems/nasl)
+[![Build Status](http://img.shields.io/travis/tenable/nasl.svg)](https://travis-ci.org/tenable/nasl)
 
 ## Git
 
