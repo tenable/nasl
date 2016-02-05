@@ -1,5 +1,7 @@
 # Installation
 
+[![Gem Version](http://img.shields.io/gem/v/nasl.svg?style=flat-square)](https://rubygems.org/gems/nasl)
+
 ## Git
 
 Installing the source from Git is done as follows:
