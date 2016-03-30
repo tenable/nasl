@@ -56,6 +56,10 @@ module Nasl
       'TRUE'       => :TRUE
     }
 
+    @@operator_lengths = []
+
+    # These are all of the operators defined in NASL. Their order is vitally
+    # important.
     @@operators = [
       ["><",   :SUBSTR_EQ],
       [">!<",  :SUBSTR_NE],
@@ -128,10 +132,15 @@ module Nasl
     def initialize!
       return if @@initialized
 
-      # Convert the operators into a regex-compatible form.
-      @@operators = @@operators.map do |op, type|
-        [Regexp.new("^#{Regexp.escape(op)}"), op, type]
+      @@operator_lengths = @@operators.map { |op, type| op.length }.uniq
+
+      # Convert the operators into a form that's fast to access.
+      tmp = {}
+      @@operators.each_with_index do |op_and_type, index|
+        op, type = op_and_type
+        tmp[op] = [op, type, index]
       end
+      @@operators = tmp
 
       @@initialized = true
     end
@@ -309,15 +318,13 @@ module Nasl
     end
 
     def get_operator
-      # These are all of the operators defined in NASL. Their order is vitally
-      # important.
-      @@operators.each do |regex, op, type|
-        next if @line !~ regex
-        consume(op.length)
-        return [type, op]
-      end
-
-      return nil
+      line_prefixes = @@operator_lengths.map { |len| @line[0, len] }
+      operators_that_matched = line_prefixes.map { |prefix| @@operators[prefix] }
+      operators_that_matched.reject!(&:nil?)
+      return nil if operators_that_matched.empty?
+      op, type = operators_that_matched.sort { |a, b| a[2] <=> b[2] }.first
+      consume(op.length)
+      return [type, op]
     end
 
     def get_token
