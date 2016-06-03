@@ -230,6 +230,8 @@ rule
              { n(:Foreach, val[0], val[1], val[3], val[5]) }
              | FOREACH LPAREN ident IN expr RPAREN statement
              { n(:Foreach, val[0], val[2], val[4], val[6]) }
+             | FOREACH LPAREN VAR ident IN expr RPAREN statement
+             { n(:Foreach, val[0], val[3], val[5], val[7]) }
              ;
 
   if         : IF LPAREN expr RPAREN statement
@@ -434,6 +436,8 @@ rule
 
   field      : assign_exp
              { val[0] }
+             | VAR assign_exp
+             { val[1] }
              | call_exp
              { val[0] }
              | decr_exp
@@ -612,18 +616,30 @@ def on_error(type, value, stack)
 end
 
 def next_token
-  @tok = @tkz.get_token
+  if @ntok.nil?
+    @tok = @tkz.get_token
+  else
+    @tok = @ntok
+  end
+
+  @ntok = @tkz.get_token
 
   if @first && @tok.first == :COMMENT
     n(:Comment, @tok.last)
-    @tok = @tkz.get_token
+    @tok = @ntok
+    @ntok = @tkz.get_token
   end
   @first = false
+
+  if @tok.first == :VAR and @ntok.first != :IDENT
+    @tok[0] = :IDENT
+  end
 
   return @tok
 end
 
 def parse(env, code, path)
+  @ntok = nil
   @first = true
   @tree = Tree.new(env)
   @tkz = Tokenizer.new(code, path)

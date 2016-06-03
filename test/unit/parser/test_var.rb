@@ -46,4 +46,8 @@ class TestVar < Test::Unit::TestCase
   def test_mixed
     pass('var a, b = 2, c = @c;')
   end
+
+  def test_as_ident
+    pass('var = 1;')
+  end
 end

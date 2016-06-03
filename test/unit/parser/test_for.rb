@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2014, Tenable Network Security
+# Copyright (c) 2016, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,33 +27,17 @@
 class TestForeach < Test::Unit::TestCase
   include Nasl::Test
 
-  def test_old
+  def test_for
     same(
-      %q|foreach foo (bar);|,
-      '<tree><foreach><identifier name="foo"/><lvalue><identifier name="bar"/></lvalue><empty/></foreach></tree>'
+      %q|for (i = 0; i < 5; i++);|,
+      '<tree><for><assignment><op>=</op><lvalue><identifier name="i"/></lvalue><integer value="0"/></assignment><expression><op>&lt;</op><lvalue><identifier name="i"/></lvalue><integer value="5"/></expression><increment><lvalue><identifier name="i"/></lvalue><type>post</type></increment><empty/></for></tree>'
     )
   end
 
-  def test_new
+  def test_for_declare_var
     same(
-      %q|foreach (foo in bar);|,
-      '<tree><foreach><identifier name="foo"/><lvalue><identifier name="bar"/></lvalue><empty/></foreach></tree>'
-    )
-  end
-
-  # Check that the 'foreach' itself is in the tokens list
-  def test_foreach_in_tokens
-    tree = parse(%q|foreach foo (bar);|)
-    assert_equal(
-      tree.all(:Foreach).first.tokens.first.to_s,
-      "foreach"
-    )
-  end
-
-  def test_foreach_declare_var
-    same(
-      %q|foreach (var foo in bar);|,
-      '<tree><foreach><identifier name="foo"/><lvalue><identifier name="bar"/></lvalue><empty/></foreach></tree>'
+      %q|for(var i = 0; i < 5; i++);|,
+      '<tree><for><assignment><op>=</op><lvalue><identifier name="i"/></lvalue><integer value="0"/></assignment><expression><op>&lt;</op><lvalue><identifier name="i"/></lvalue><integer value="5"/></expression><increment><lvalue><identifier name="i"/></lvalue><type>post</type></increment><empty/></for></tree>'
     )
   end
 end
