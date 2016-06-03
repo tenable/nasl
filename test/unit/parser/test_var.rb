@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2016, Tenable Network Security
+# Copyright (c) 2016, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,46 +24,26 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-module Nasl
-  class Token
-    attr_reader :body, :ctx, :name, :region, :type
+class TestVar < Test::Unit::TestCase
+  include Nasl::Test
 
-    def initialize(type, body, region, ctx)
-      @type = type
-      @body = body
-      @region = region
-      @ctx = ctx
-    end
+  def test_empty
+    fail_parse('var;')
+  end
 
-    def context(*args)
-      @ctx.context(@region, *args)
-    end
+  def test_ident
+    pass('var a, b, c;')
+  end
 
-    def name
-      case @type
-      when *[:BREAK, :CONTINUE, :ELSE, :EXPORT, :FOR, :FOREACH, :FUNCTION,
-            :GLOBAL, :IF, :IMPORT, :INCLUDE, :LOCAL, :REPEAT, :RETURN, :UNTIL,
-            :REP, :VAR, :WHILE]
-        "a keyword"
-      when :UNDEF
-        "an undefined constant"
-      when *[:FALSE, :TRUE]
-        "a boolean constant"
-      when :IDENT
-        "an identifier"
-      when *[:DATA, :STRING]
-        "a string"
-      when *[:INT_DEC, :INT_HEX, :INT_OCT]
-        "an integer"
-      when :EOF
-        "the end of the file"
-      else
-        "an operator"
-      end
-    end
+  def test_assign_expression
+    pass('var a = 1, b = 2, c = 3;')
+  end
 
-    def to_s
-      @body
-    end
+  def test_assign_reference
+    pass('var a = @a, b = @b, c = @c;')
+  end
+
+  def test_mixed
+    pass('var a, b = 2, c = @c;')
   end
 end

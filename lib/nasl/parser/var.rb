@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2016, Tenable Network Security
+# Copyright (c) 2016, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,46 +24,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
+require 'nasl/parser/node'
+
 module Nasl
-  class Token
-    attr_reader :body, :ctx, :name, :region, :type
+  class Var < Node
+    attr_reader :idents
 
-    def initialize(type, body, region, ctx)
-      @type = type
-      @body = body
-      @region = region
-      @ctx = ctx
-    end
+    def initialize(tree, *tokens)
+      super
 
-    def context(*args)
-      @ctx.context(@region, *args)
-    end
+      @idents = @tokens[1]
 
-    def name
-      case @type
-      when *[:BREAK, :CONTINUE, :ELSE, :EXPORT, :FOR, :FOREACH, :FUNCTION,
-            :GLOBAL, :IF, :IMPORT, :INCLUDE, :LOCAL, :REPEAT, :RETURN, :UNTIL,
-            :REP, :VAR, :WHILE]
-        "a keyword"
-      when :UNDEF
-        "an undefined constant"
-      when *[:FALSE, :TRUE]
-        "a boolean constant"
-      when :IDENT
-        "an identifier"
-      when *[:DATA, :STRING]
-        "a string"
-      when *[:INT_DEC, :INT_HEX, :INT_OCT]
-        "an integer"
-      when :EOF
-        "the end of the file"
-      else
-        "an operator"
-      end
-    end
-
-    def to_s
-      @body
+      @children << :idents
     end
   end
 end

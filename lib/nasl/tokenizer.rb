@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2014, Tenable Network Security
+# Copyright (c) 2011-2016, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -49,6 +49,7 @@ module Nasl
       'return'     => :RETURN,
       'until'      => :UNTIL,
       'x'          => :REP,
+      'var'        => :VAR,
       'while'      => :WHILE,
 
       'FALSE'      => :FALSE,

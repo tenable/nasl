@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2014, Tenable Network Security
+# Copyright (c) 2011-2016, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -130,6 +130,8 @@ rule
              { val[0] }
              | return
              { val[0] }
+             | var
+             { val[0] }
              ;
 
   compound   : block
@@ -204,6 +206,10 @@ rule
              { n(:Return, *val) }
              | RETURN SEMICOLON
              { n(:Return, *val) }
+             ;
+
+  var        : VAR var_decls SEMICOLON
+             { n(:Var, *val) }
              ;
 
   ##############################################################################
@@ -576,6 +582,7 @@ require 'nasl/parser/repetition'
 require 'nasl/parser/return'
 require 'nasl/parser/string'
 require 'nasl/parser/undefined'
+require 'nasl/parser/var'
 require 'nasl/parser/while'
 
 ---- inner ----
