@@ -53,4 +53,5 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'builder', '~> 3.2'
   s.add_runtime_dependency 'rainbow', '~> 2.0'
+  s.add_runtime_dependency 'test-unit-minitest'
 end
