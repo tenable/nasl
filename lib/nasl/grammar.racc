@@ -78,6 +78,8 @@ rule
              { c(*val) }
              | function
              { val[0] }
+             | namespace
+             { val[0] }
              | statement
              { val[0] }
              ;
@@ -87,6 +89,14 @@ rule
              | compound
              { val[0] }
              ;
+
+  ns_statement : simple
+                 { val[0] }
+                 | compound
+                 { val[0] }
+                 | function
+                 { val[0] }
+                 ;
 
   ##############################################################################
   # Root Statements
@@ -100,6 +110,10 @@ rule
              { n(:Function, *val) }
              | FUNCTION ident LPAREN RPAREN block
              { n(:Function, *val) }
+             ;
+
+  namespace  : NAMESPACE ident ns_block
+             { n(:Namespace, *val) }
              ;
 
   simple     : assign
@@ -141,6 +155,8 @@ rule
              | foreach
              { val[0] }
              | if
+             { val[0] }
+             | namespace
              { val[0] }
              | repeat
              { val[0] }
@@ -221,6 +237,12 @@ rule
              | LBRACE RBRACE
              { n(:Block, *val) }
              ;
+
+  ns_block : LBRACE ns_statements RBRACE
+                    { n(:Block, *val) }
+                    | LBRACE RBRACE
+                    { n(:Block, *val) }
+                    ;
 
   for        : FOR LPAREN field SEMICOLON expr SEMICOLON field RPAREN statement
              { n(:For, *val) }
@@ -496,6 +518,12 @@ rule
              { [val[0]] }
              ;
 
+  ns_statements : ns_statement ns_statements
+                         { [val[0]] + val[1] }
+                         | ns_statement
+                         { [val[0]] }
+                         ;
+
   var_decl   : ident ASS_EQ expr
              { n(:Assignment, *val) }
              | ident ASS_EQ ref
@@ -579,6 +607,7 @@ require 'nasl/parser/key_value_pair'
 require 'nasl/parser/list'
 require 'nasl/parser/local'
 require 'nasl/parser/lvalue'
+require 'nasl/parser/namespace'
 require 'nasl/parser/parameter'
 require 'nasl/parser/reference'
 require 'nasl/parser/repeat'

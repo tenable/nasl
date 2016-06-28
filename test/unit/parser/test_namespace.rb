@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2016, Tenable Network Security
+# Copyright (c) 2016, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,46 +24,42 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-module Nasl
-  class Token
-    attr_reader :body, :ctx, :name, :region, :type
+class TestNamespace < Test::Unit::TestCase
+  include Nasl::Test
 
-    def initialize(type, body, region, ctx)
-      @type = type
-      @body = body
-      @region = region
-      @ctx = ctx
-    end
+  def test_namespace
+    tree = parse("namespace foo {}")
+    assert_not_nil(tree)
 
-    def context(*args)
-      @ctx.context(@region, *args)
-    end
+    namespaces = tree.all(:Namespace)
+    assert_not_nil(namespaces)
+    assert_equal(1, namespaces.length)
+  end
 
-    def name
-      case @type
-      when *[:BREAK, :CONTINUE, :ELSE, :EXPORT, :FOR, :FOREACH, :FUNCTION,
-            :GLOBAL, :IF, :IMPORT, :INCLUDE, :LOCAL, :NAMESPACE, :REPEAT, :RETURN, :UNTIL,
-            :REP, :VAR, :WHILE]
-        "a keyword"
-      when :UNDEF
-        "an undefined constant"
-      when *[:FALSE, :TRUE]
-        "a boolean constant"
-      when :IDENT
-        "an identifier"
-      when *[:DATA, :STRING]
-        "a string"
-      when *[:INT_DEC, :INT_HEX, :INT_OCT]
-        "an integer"
-      when :EOF
-        "the end of the file"
-      else
-        "an operator"
-      end
-    end
+  def test_nested_namespace
+    tree = parse("namespace foo {namespace bar {}}")
+    assert_not_nil(tree)
 
-    def to_s
-      @body
-    end
+    namespaces = tree.all(:Namespace)
+    assert_not_nil(namespaces)
+    assert_equal(2, namespaces.length)
+  end
+
+  def test_namespace_with_function
+    tree = parse("namespace foo {function bar() {}}")
+    assert_not_nil(tree)
+
+    functions = tree.all(:Function)
+    assert_not_nil(functions)
+    assert_equal(1, functions.length)
+  end
+
+  def test_namespace_with_global
+    tree = parse("namespace foo {global_var bar = 1;}")
+    assert_not_nil(tree)
+
+    globals = tree.all(:Global)
+    assert_not_nil(globals)
+    assert_equal(1, globals.length)
   end
 end

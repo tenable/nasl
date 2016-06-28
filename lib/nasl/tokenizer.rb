@@ -45,6 +45,7 @@ module Nasl
       'in'         => :IN,
       'include'    => :INCLUDE,
       'local_var'  => :LOCAL,
+      'namespace'  => :NAMESPACE,
       'repeat'     => :REPEAT,
       'return'     => :RETURN,
       'until'      => :UNTIL,
@@ -208,8 +209,19 @@ module Nasl
     end
 
     def get_identifier
-      # Identifiers are composed of letters, digits, and underscores.
-      ident = @line[/^[_a-z][_a-z0-9]*/i]
+      # Identifiers are composed of letters, digits, underscores, and double colons.
+      ident = @line[/^(?:[_a-z0-9]|::)+/i]
+      die("Invalid identifier") if ident.nil?
+
+      ident_parts = ident.split("::", -1)
+      for i in 0...ident_parts.length
+        # First part can be blank
+        next if i == 0 and ident_parts[i] == ""
+        # Check each part is valid
+        test = ident_parts[i][/^[_a-z][_a-z0-9]*/i]
+        die("Invalid identifier") if test.nil?
+      end
+
       consume(ident.length)
 
       # Assume that we've got an identifier until proven otherwise.
@@ -344,7 +356,7 @@ module Nasl
       @mark = @point
 
       # Try to parse token at the point.
-      token = if @char =~ /[_a-z]/i
+      token = if @char =~ /[_a-z]/i or @code[@point..@point+1] == "::"
         get_identifier
       elsif @char =~ /['"]/
         get_string

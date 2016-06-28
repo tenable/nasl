@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2016, Tenable Network Security
+# Copyright (c) 2016, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,46 +24,55 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-module Nasl
-  class Token
-    attr_reader :body, :ctx, :name, :region, :type
 
-    def initialize(type, body, region, ctx)
-      @type = type
-      @body = body
-      @region = region
-      @ctx = ctx
-    end
+class TestTokenizerIdent < Test::Unit::TestCase
+  include Nasl::Test
 
-    def context(*args)
-      @ctx.context(@region, *args)
-    end
+  def test_ident
+    tkz = tokenize("foo")
+    type, tok = tkz.get_token
+    assert_equal(:IDENT, type)
 
-    def name
-      case @type
-      when *[:BREAK, :CONTINUE, :ELSE, :EXPORT, :FOR, :FOREACH, :FUNCTION,
-            :GLOBAL, :IF, :IMPORT, :INCLUDE, :LOCAL, :NAMESPACE, :REPEAT, :RETURN, :UNTIL,
-            :REP, :VAR, :WHILE]
-        "a keyword"
-      when :UNDEF
-        "an undefined constant"
-      when *[:FALSE, :TRUE]
-        "a boolean constant"
-      when :IDENT
-        "an identifier"
-      when *[:DATA, :STRING]
-        "a string"
-      when *[:INT_DEC, :INT_HEX, :INT_OCT]
-        "an integer"
-      when :EOF
-        "the end of the file"
-      else
-        "an operator"
-      end
-    end
+    tkz = tokenize("_foo")
+    type, tok = tkz.get_token
+    assert_equal(:IDENT, type)
 
-    def to_s
-      @body
-    end
+    tkz = tokenize("foo1")
+    type, tok = tkz.get_token
+    assert_equal(:IDENT, type)
+
+    tkz = tokenize("foo_bar")
+    type, tok = tkz.get_token
+    assert_equal(:IDENT, type)
+  end
+
+  def test_ident_namespace
+    tkz = tokenize("foo::var")
+    type, tok = tkz.get_token
+    assert_equal(:IDENT, type)
+
+    tkz = tokenize("foo::bar::var")
+    type, tok = tkz.get_token
+    assert_equal(:IDENT, type)
+
+    tkz = tokenize("::var")
+    type, tok = tkz.get_token
+    assert_equal(:IDENT, type)
+  end
+
+  def test_invalid_ident
+    tkz = tokenize("1foo")
+    assert_raise(Nasl::TokenException) { tkz.get_token }
+  end
+
+  def test_invalid_ident_namespace
+    tkz = tokenize("foo::")
+    assert_raise(Nasl::TokenException) { tkz.get_token }
+
+    tkz = tokenize("foo::1var")
+    assert_raise(Nasl::TokenException) { tkz.get_token }
+
+    tkz = tokenize("::")
+    assert_raise(Nasl::TokenException) { tkz.get_token }
   end
 end
