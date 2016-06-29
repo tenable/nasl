@@ -98,6 +98,8 @@ rule
                  { val[0] }
                  | function
                  { val[0] }
+                 | namespace
+                 { val[0] }
                  | object
                  { val[0] }
                  ;
@@ -173,8 +175,6 @@ rule
              | foreach
              { val[0] }
              | if
-             { val[0] }
-             | namespace
              { val[0] }
              | repeat
              { val[0] }
