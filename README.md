@@ -101,5 +101,28 @@ obviously, and can be used as follows:
 That's all there is to it. If there are any errors, it'll throw an instance of
 `ParseException` that will include as much context about the error as possible.
 
+Development
+-----------
+
+This project uses [Bundler](http://bundler.io/).
+
+If you have a brand-new Debian machine, do this as root:
+
+    apt-get install ruby-dev rubygems git
+    gem install bundler
+
+As your regular user:
+
+    git clone https://github.com/tenable/nasl
+    cd nasl
+    bundle install --path vendor/bundle
+    bundle exec rake grammars
+    bundle exec rake test
+
+All the tests should pass!
+
+To run the nasl-parse command line, do `bundle exec ./bin/nasl-parse`, which should give
+a help message.
+
 [nasldoc]: https://github.com/tenable/nasldoc
 [pedant]: https://github.com/tenable/pedant
