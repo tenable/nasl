@@ -577,6 +577,8 @@ rule
              { n(:Identifier, *val) }
              | IN
              { n(:Identifier, *val) }
+             | VAR
+             { n(:Identifier, *val) }
              ;
 
   int        : INT_DEC
@@ -675,30 +677,18 @@ def on_error(type, value, stack)
 end
 
 def next_token
-  if @ntok.nil?
-    @tok = @tkz.get_token
-  else
-    @tok = @ntok
-  end
-
-  @ntok = @tkz.get_token
+  @tok = @tkz.get_token
 
   if @first && @tok.first == :COMMENT
     n(:Comment, @tok.last)
-    @tok = @ntok
-    @ntok = @tkz.get_token
+    @tok = @tkz.get_token
   end
   @first = false
-
-  if @tok.first == :VAR and @ntok.first != :IDENT
-    @tok[0] = :IDENT
-  end
 
   return @tok
 end
 
 def parse(env, code, path)
-  @ntok = nil
   @first = true
   @tree = Tree.new(env)
   @tkz = Tokenizer.new(code, path)

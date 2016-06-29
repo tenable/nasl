@@ -50,4 +50,12 @@ class TestVar < Test::Unit::TestCase
   def test_as_ident
     pass('var = 1;')
   end
+
+  def test_var_rep_as_ident
+    pass('var x = 1;')
+  end
+
+  def test_var_in_as_ident
+    pass('var in = 1;')
+  end
 end
