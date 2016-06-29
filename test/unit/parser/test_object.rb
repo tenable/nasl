@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2016, Tenable Network Security
+# Copyright (c) 2016, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,46 +24,56 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-module Nasl
-  class Token
-    attr_reader :body, :ctx, :name, :region, :type
+class TestObject < Test::Unit::TestCase
+  include Nasl::Test
 
-    def initialize(type, body, region, ctx)
-      @type = type
-      @body = body
-      @region = region
-      @ctx = ctx
-    end
+  def test_object
+    tree = parse("object foo {}")
+    assert_not_nil(tree)
 
-    def context(*args)
-      @ctx.context(@region, *args)
-    end
+    objects = tree.all(:Object)
+    assert_not_nil(objects)
+    assert_equal(1, objects.length)
+  end
 
-    def name
-      case @type
-      when *[:BREAK, :CONTINUE, :ELSE, :EXPORT, :FOR, :FOREACH, :FUNCTION,
-            :GLOBAL, :IF, :IMPORT, :INCLUDE, :LOCAL, :NAMESPACE, :OBJECT, :REPEAT, :RETURN, :UNTIL,
-            :REP, :VAR, :WHILE]
-        "a keyword"
-      when :UNDEF
-        "an undefined constant"
-      when *[:FALSE, :TRUE]
-        "a boolean constant"
-      when :IDENT
-        "an identifier"
-      when *[:DATA, :STRING]
-        "a string"
-      when *[:INT_DEC, :INT_HEX, :INT_OCT]
-        "an integer"
-      when :EOF
-        "the end of the file"
-      else
-        "an operator"
-      end
-    end
+  def test_object_with_function
+    tree = parse("object foo {function bar() {}}")
+    assert_not_nil(tree)
 
-    def to_s
-      @body
-    end
+    functions = tree.all(:Function)
+    assert_not_nil(functions)
+    assert_equal(1, functions.length)
+  end
+
+  def test_object_with_var
+    tree = parse("object foo {var bar;}")
+    assert_not_nil(tree)
+
+    vars = tree.all(:Var)
+    assert_not_nil(vars)
+    assert_equal(1, vars.length)
+  end
+
+  def test_object_with_var_init
+    tree = parse("object foo {var bar = 1;}")
+    assert_not_nil(tree)
+
+    vars = tree.all(:Var)
+    assert_not_nil(vars)
+    assert_equal(1, vars.length)
+  end
+
+  def test_object_in_namespace
+    tree = parse("namespace foo {object bar {}}")
+    assert_not_nil(tree)
+
+    objects = tree.all(:Object)
+    assert_not_nil(objects)
+    assert_equal(1, objects.length)
+  end
+
+  def test_object_fail_not_var_or_func
+    fail_parse("object foo{display('foo!');}")
+    fail_parse("object foo{while(1){}}")
   end
 end

@@ -46,6 +46,7 @@ module Nasl
       'include'    => :INCLUDE,
       'local_var'  => :LOCAL,
       'namespace'  => :NAMESPACE,
+      'object'     => :OBJECT,
       'repeat'     => :REPEAT,
       'return'     => :RETURN,
       'until'      => :UNTIL,

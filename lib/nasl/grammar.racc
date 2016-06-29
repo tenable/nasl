@@ -80,6 +80,8 @@ rule
              { val[0] }
              | namespace
              { val[0] }
+             | object
+             { val[0] }
              | statement
              { val[0] }
              ;
@@ -93,6 +95,18 @@ rule
   ns_statement : simple
                  { val[0] }
                  | compound
+                 { val[0] }
+                 | function
+                 { val[0] }
+                 | object
+                 { val[0] }
+                 ;
+
+  object_statement : global 
+                 { val[0] }
+                 | local
+                 { val[0] }
+                 | var
                  { val[0] }
                  | function
                  { val[0] }
@@ -114,6 +128,10 @@ rule
 
   namespace  : NAMESPACE ident ns_block
              { n(:Namespace, *val) }
+             ;
+
+  object     : OBJECT ident object_block
+             { n(:Object, *val) }
              ;
 
   simple     : assign
@@ -243,6 +261,11 @@ rule
                     | LBRACE RBRACE
                     { n(:Block, *val) }
                     ;
+  object_block : LBRACE object_statements RBRACE
+                 { n(:Block, *val) }
+                 | LBRACE RBRACE
+                 { n(:Block, *val) }
+                 ;
 
   for        : FOR LPAREN field SEMICOLON expr SEMICOLON field RPAREN statement
              { n(:For, *val) }
@@ -519,10 +542,16 @@ rule
              ;
 
   ns_statements : ns_statement ns_statements
-                         { [val[0]] + val[1] }
-                         | ns_statement
-                         { [val[0]] }
-                         ;
+                  { [val[0]] + val[1] }
+                  | ns_statement
+                  { [val[0]] }
+                  ;
+
+  object_statements : object_statement object_statements
+                      { [val[0]] + val[1] }
+                      | object_statement
+                      { [val[0]] }
+                      ;
 
   var_decl   : ident ASS_EQ expr
              { n(:Assignment, *val) }
@@ -608,6 +637,7 @@ require 'nasl/parser/list'
 require 'nasl/parser/local'
 require 'nasl/parser/lvalue'
 require 'nasl/parser/namespace'
+require 'nasl/parser/object'
 require 'nasl/parser/parameter'
 require 'nasl/parser/reference'
 require 'nasl/parser/repeat'
