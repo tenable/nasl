@@ -421,9 +421,9 @@ rule
   # Named Components
   ##############################################################################
 
-  arg        : ident COLON expr
+  arg        : ident_ex COLON expr
              { n(:Argument, *val) }
-             | ident COLON ref
+             | ident_ex COLON ref
              { n(:Argument, *val) }
              | expr
              { n(:Argument, *val) }
@@ -577,6 +577,10 @@ rule
              { n(:Identifier, *val) }
              | IN
              { n(:Identifier, *val) }
+             ;
+
+  ident_ex   : ident
+             { val[0] }
              | VAR
              { n(:Identifier, *val) }
              ;

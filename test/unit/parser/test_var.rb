@@ -47,8 +47,12 @@ class TestVar < Test::Unit::TestCase
     pass('var a, b = 2, c = @c;')
   end
 
-  def test_as_ident
-    pass('var = 1;')
+  def test_var_as_named_param
+    pass('insert_element(var:a, idx:"a", value:4);')
+  end
+
+  def test_var_as_ident
+    fail_parse('var = 1;');
   end
 
   def test_var_rep_as_ident
