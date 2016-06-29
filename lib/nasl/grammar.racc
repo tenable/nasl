@@ -112,6 +112,12 @@ rule
                  { val[0] }
                  | function
                  { val[0] }
+                 | private
+                 { val[0] }
+                 | protected
+                 { val[0] }
+                 | public
+                 { val[0] }
                  ;
 
   ##############################################################################
@@ -577,6 +583,14 @@ rule
              { n(:Identifier, *val) }
              | IN
              { n(:Identifier, *val) }
+             | OBJECT
+             { n(:Identifier, *val) }
+             | PRIVATE
+             { n(:Identifier, *val) }
+             | PROTECTED
+             { n(:Identifier, *val) }
+             | PUBLIC
+             { n(:Identifier, *val) }
              ;
 
   ident_ex   : ident
@@ -608,6 +622,22 @@ rule
 
   undef      : UNDEF
              { n(:Undefined, *val) }
+             ;
+
+  ##############################################################################
+  # Object Keywords
+  ##############################################################################
+
+  public     : PUBLIC function
+             { n(:Public, *val) }
+             ;
+
+  private    : PRIVATE function
+             { n(:Private, *val) }
+             ;
+
+  protected  : PROTECTED function
+             { n(:Protected, *val) }
              ;
 end
 
@@ -645,6 +675,9 @@ require 'nasl/parser/lvalue'
 require 'nasl/parser/namespace'
 require 'nasl/parser/object'
 require 'nasl/parser/parameter'
+require 'nasl/parser/private'
+require 'nasl/parser/protected'
+require 'nasl/parser/public'
 require 'nasl/parser/reference'
 require 'nasl/parser/repeat'
 require 'nasl/parser/repetition'

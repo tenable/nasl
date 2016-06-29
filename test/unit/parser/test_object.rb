@@ -76,4 +76,31 @@ class TestObject < Test::Unit::TestCase
     fail_parse("object foo{display('foo!');}")
     fail_parse("object foo{while(1){}}")
   end
+
+  def test_object_constructor
+    parse("object foo{function foo(){}}");
+  end
+
+  #def test_object_destructor
+  #  parse("object foo{function ~foo(){}}");
+  #end
+
+  def test_object_public_function
+    parse("object foo{public function bar(){}}")
+  end
+
+  def test_object_private_function
+    parse("object foo{private function bar(){}}")
+  end
+
+  def test_object_protected_function
+    parse("object foo{protected function bar(){}}")
+  end
+
+  def test_object_keywords_as_ident
+    parse("object = 1;")
+    parse("private = 1;")
+    parse("protected = 1;")
+    parse("public = 1;")
+  end
 end
