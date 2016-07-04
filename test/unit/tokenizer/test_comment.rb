@@ -116,7 +116,7 @@ class TestTokenizerComment < Test::Unit::TestCase
     verify(code, assign + assign) 
   end
 
-  def test_hidden_aften
+  def test_hidden_after
     code = <<-EOF
       foo = TRUE;
 
