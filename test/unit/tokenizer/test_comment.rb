@@ -99,6 +99,81 @@ class TestTokenizerComment < Test::Unit::TestCase
     verify(code, [[:COMMENT, "# Comment 1"]])
   end
 
+  def test_c_style_multiline_beginning_of_statement
+    code = "/* Simple */a=1;"
+
+    assign = [
+      [:COMMENT, "/* Simple */"],
+      [:IDENT, "a"],
+      [:ASS_EQ, "="],
+      [:INT_DEC, "1"],
+      [:SEMICOLON, ";"],
+    ]
+
+    verify(code, assign)
+  end
+
+  def test_c_style_multiline_in_middle_of_statement
+    code = <<-EOF
+      hello = 1/*
+        comment here */;
+    EOF
+
+    assign = [
+      [:IDENT, "hello"],
+      [:ASS_EQ, "="],
+      [:INT_DEC, "1"],
+      [:SEMICOLON, ";"],
+    ]
+
+    verify(code, assign)
+  end
+
+  def test_c_style_empty
+    verify("//", [[ :COMMENT, "//" ]])
+    verify("/**/", [[ :COMMENT, "/**/" ]])
+  end
+
+  def test_c_style_multiline_after_statement
+    code = <<-EOF
+      hello = 1;/* comment here */
+    EOF
+
+    assign = [
+      [:IDENT, "hello"],
+      [:ASS_EQ, "="],
+      [:INT_DEC, "1"],
+      [:SEMICOLON, ";"],
+    ]
+
+    verify(code, assign)
+  end
+
+  def test_c_style_single_line_after_statement
+    code = <<-EOF
+      hello = 1;// comment here
+    EOF
+
+    assign = [
+      [:IDENT, "hello"],
+      [:ASS_EQ, "="],
+      [:INT_DEC, "1"],
+      [:SEMICOLON, ";"],
+    ]
+
+    verify(code, assign)
+  end
+
+  def test_c_style_unterminated
+    code = <<-EOF
+      hello = 1; /* hello
+    EOF
+
+    assert_raise Nasl::TokenException do
+      tokenize(code).get_tokens
+    end
+  end
+
   def test_hidden_before
     code = <<-EOF
       foo = TRUE;

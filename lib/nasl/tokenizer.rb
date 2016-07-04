@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2014, Tenable Network Security
+# Copyright (c) 2011-2016, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -317,6 +317,22 @@ module Nasl
       return [:COMMENT, block.join("\n")]
     end
 
+    def get_comment_c_style
+      if @code[@point+1] == '/'
+        comment = @line[/^\/\/.*$/]
+      # Multi-line: /* comment here */
+      else
+        newline = @code[@point..-1]
+        comment = newline[/^\/\*.*?\*\//m]
+        die("Unterminated multiline comment") if comment.nil?
+      end
+
+      consume(comment.length)
+      skip
+
+      return [:COMMENT, comment]
+    end
+
     def get_operator
       line_prefixes = @@operator_lengths.map { |len| @line[0, len] }
       operators_that_matched = line_prefixes.map { |prefix| @@operators[prefix] }
@@ -351,6 +367,8 @@ module Nasl
         get_integer
       elsif @char == '#'
         get_comment
+      elsif (@char == '/') && ["/", "*"].include?(@code[@point+1])
+        get_comment_c_style
       else
         get_operator
       end
