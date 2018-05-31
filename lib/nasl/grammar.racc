@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2014, Tenable Network Security
+# Copyright (c) 2011-2018, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -74,17 +74,39 @@ rule
              { c(*val) }
              | export
              { val[0] }
-             | COMMENT function
-             { c(*val) }
-             | function
-             { val[0] }
+           #  | COMMENT function
+           #  { c(*val) }
+           #  | function
+           #  { val[0] }
              | statement
              { val[0] }
+             | obj_decl
+             { val[0] }
+             | namespace
+             { val[0] }
              ;
+
+  obj_statement : obj_var SEMICOLON
+                { val[0] }
+                | COMMENT obj_function
+                { c(*val) }
+                | obj_function
+                { val[0] }
+                ;
+              #  | obj_function
+              #  { val[0] }
 
   statement : simple
              { val[0] }
              | compound
+             { val[0] }
+             | function 
+             { val[0] }
+             | COMMENT function 
+             { c(*val) }
+             | obj_decl
+             { val[0] }
+             | namespace 
              { val[0] }
              ;
 
@@ -96,10 +118,16 @@ rule
              { n(:Export, *val) }
              ;
 
+  obj_function : obj_func_attr FUNCTION ident LPAREN params RPAREN block
+               { n(:Function, val[0], 'obj', val[1], val[2], val[3], val[4], val[5], val[6]) }
+               | obj_func_attr FUNCTION ident LPAREN RPAREN block
+               { n(:Function, val[0], 'obj', val[1], val[2], val[3], val[4], val[5]) }
+               ;
+
   function   : FUNCTION ident LPAREN params RPAREN block
-             { n(:Function, *val) }
+             { n(:Function, val[0], 'normal', val[1], val[2], val[3], val[4], val[5]) }
              | FUNCTION ident LPAREN RPAREN block
-             { n(:Function, *val) }
+             { n(:Function, val[0], 'normal', val[1], val[2], val[3], val[4]) }
              ;
 
   simple     : assign
@@ -117,6 +145,8 @@ rule
              | COMMENT global
              { c(*val) }
              | global
+             { val[0] }
+             | var_def
              { val[0] }
              | import
              { val[0] }
@@ -144,8 +174,23 @@ rule
              { val[0] }
              | while
              { val[0] }
+             | switch
+             { val[0] }
+             | case
+             { val[0] }
              ;
 
+  namespace  : NAMESPACE ident LBRACE statements RBRACE 
+             { n(:Namespace, *val) }
+             | NAMESPACE ident LBRACE RBRACE
+             { n(:Namespace, *val) }
+             ;
+
+  obj_decl   : OBJECT ident LBRACE obj_statements RBRACE
+             { n(:Object, *val) }
+             | NAMESPACE ident LBRACE RBRACE
+             { n(:Namespace, *val) }
+             ;
   ##############################################################################
   # Simple Statements
   ##############################################################################
@@ -178,6 +223,10 @@ rule
              { n(:Global, *val) }
              ;
 
+  var_def    : VAR var_decls SEMICOLON
+             { n(:Local, *val) }
+             ;
+
   incr       : incr_exp SEMICOLON
              { val[0] }
              ;
@@ -188,6 +237,10 @@ rule
 
   include    : INCLUDE LPAREN string RPAREN SEMICOLON
              { n(:Include, *val) }
+             ;
+
+  local      : LOCAL var_decls SEMICOLON
+             { n(:Local, *val) }
              ;
 
   local      : LOCAL var_decls SEMICOLON
@@ -206,15 +259,52 @@ rule
              { n(:Return, *val) }
              ;
 
+  obj_func_attr : /* Empty */ 
+                { nil }
+                | PUBLIC 
+                { val[0] }
+                | PRIVATE
+                { val[0] }
+                ;
+                
   ##############################################################################
   # Compound Statements
   ##############################################################################
-
   block      : LBRACE statements RBRACE
              { n(:Block, *val) }
              | LBRACE RBRACE
              { n(:Block, *val) }
              ;
+
+  switch     : SWITCH LPAREN expr RPAREN switch_block
+             { n(:Switch, *val) }
+             | SWITCH LBRACK switch_op RBRACK LPAREN expr RPAREN switch_block
+             { n(:Switch, *val) }
+             ;
+ 
+  case       : CASE case_expr_list COLON
+             { n(:Case, *val) }
+             | CASE LBRACK switch_op RBRACK case_expr_list COLON
+             { n(:Case, *val) }
+             | DEFAULT COLON
+             { n(:Case, *val) }
+             ;
+
+  case_expr  : expr
+             { val[0] }
+             ;
+
+  case_expr_list : case_expr
+                 { val[0] }
+                 | case_expr COMMA case_expr_list
+                 { [val[0]] + val[2] }
+                 ;
+  
+  switch_block  : LBRACE case statements RBRACE
+                { n(:Block, *val) }
+                | LBRACE RBRACE
+                { n(:Block, *val) }
+                ;
 
   for        : FOR LPAREN field SEMICOLON expr SEMICOLON field RPAREN statement
              { n(:For, *val) }
@@ -364,13 +454,47 @@ rule
              { val[0] }
              ;
 
+  switch_op  : SUBSTR_EQ
+             { val[0] }
+             | SUBSTR_NE
+             { val[0] }
+             | REGEX_EQ
+             { val[0] }
+             | REGEX_NE
+             { val[0] }
+             | CMP_LT 
+             { val[0] }
+             | CMP_GT
+             { val[0] }
+             | CMP_EQ
+             { val[0] }
+             | CMP_NE
+             { val[0] }
+             | CMP_LE
+             { val[0] }
+             | CMP_GE
+             { val[0] }
+             | AMPERSAND
+             { val[0] }
+             | BIT_XOR
+             { val[0] }
+             | BIT_OR
+             { val[0] } 
+             ;
+ 
+ 
+  ident_ex   : ident
+             { val[0] }
+             | VAR 
+             { val[0] }
+
   ##############################################################################
   # Named Components
   ##############################################################################
 
-  arg        : ident COLON expr
+  arg        : ident_ex COLON expr
              { n(:Argument, *val) }
-             | ident COLON ref
+             | ident_ex COLON ref
              { n(:Argument, *val) }
              | expr
              { n(:Argument, *val) }
@@ -480,10 +604,20 @@ rule
              { [val[0]] }
              ;
 
+  obj_statements  : obj_statement obj_statements
+                  { [val[0]] + val[1] }
+                  | obj_statement
+                  { [val[0]] }
+                  ;
+
   statements : statement statements
              { [val[0]] + val[1] }
              | statement
              { [val[0]] }
+             ;
+
+  obj_var    : VAR var_decls
+             { n(:ObjVar, *val) }
              ;
 
   var_decl   : ident ASS_EQ expr
@@ -546,6 +680,7 @@ require 'nasl/parser/argument'
 require 'nasl/parser/array'
 require 'nasl/parser/assigment'
 require 'nasl/parser/block'
+require 'nasl/parser/namespace'
 require 'nasl/parser/break'
 require 'nasl/parser/call'
 require 'nasl/parser/comment'
@@ -577,6 +712,10 @@ require 'nasl/parser/return'
 require 'nasl/parser/string'
 require 'nasl/parser/undefined'
 require 'nasl/parser/while'
+require 'nasl/parser/object'
+require 'nasl/parser/switch'
+require 'nasl/parser/case'
+require 'nasl/parser/obj_var'
 
 ---- inner ----
 

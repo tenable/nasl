@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2014, Tenable Network Security
+# Copyright (c) 2011-2018, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,30 +24,52 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/parser/node'
+class TestObject < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  class Block < Node
-    attr_reader :body
+  def test_each
+    tree = parse(
+      <<-EOF
+namespace test {
+  namespace test_inner {
+    object foo {
+      var bob = 1;
+      var a1,b1;
+      # foo
+      public function bar_pub() {}
+      # foo
+      function bar_priv_default() { a = 1; return a; }
+      private function bar_priv() {}
+      # foo
+      function test_var()
+      {
+        var test = 'a';
+        var x,y,z,t;
+      }
+    }
+  }
+  # foo!
+  function foo(){}
+}
+# foo!
+function foo(){}
+      EOF
+    )
+    assert_not_nil(tree)
 
-    include Enumerable
+    objects = tree.all(:Object)
+    assert_equal(1, objects.length)
+    assert_equal(objects[0].name.name, "foo")
 
-    def initialize(tree, *tokens)
-      super
+    functions = tree.all(:Function)
+    assert_equal(6, functions.length)
 
-      if (@tokens.length == 4)
-        @body = [@tokens[1]] + @tokens[2]
-      elsif (@tokens.length == 3)
-        @body = @tokens[1]
-      else
-        @body = []
-      end
+    assert_equal(functions[0].tokens[0].type.to_s, "PUBLIC")
+    assert_equal(functions[1].tokens[0], nil)
+    assert_equal(functions[2].tokens[0].type.to_s, "PRIVATE")
 
-      @children << :body
-    end
-
-    def each
-      @body.each{ |stmt| yield stmt }
-    end
+    obj_vars = tree.all(:ObjVar)
+    assert_equal(2, obj_vars.length)
   end
+
 end
