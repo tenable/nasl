@@ -39,15 +39,24 @@ module Nasl
       # Store all of the tokens that made up this node.
       @tokens = tokens
 
+      # handle empty token set
+
       # Extract the context object from the first token.
-      @ctx = @tokens.first.ctx
+      if(!@tokens.nil? and @tokens.length>0 and !@tokens.first.nil?)
+        @ctx = @tokens.first.ctx
+      end
     end
 
     def context(*args)
-      @ctx.context(region, *args)
+      if(!@ctx.nil?)
+        @ctx.context(region, *args)
+      end
     end
 
     def region
+      if(@tokens.flatten.first.nil?)
+        return []
+      end
       @tokens.flatten.first.region.begin..@tokens.flatten.last.region.end
     end
 

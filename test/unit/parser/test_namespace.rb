@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2014, Tenable Network Security
+# Copyright (c) 2011-2018, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,30 +24,22 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/parser/node'
+class TestNamespace < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  class Block < Node
-    attr_reader :body
+  def test_empty
+    same("namespace foo {}", "<tree><namespace><identifier name=\"foo\"/></namespace></tree>")
+  end
 
-    include Enumerable
+  def test_inner_fn
+    same("namespace foo { function fn(){} }", "<tree><namespace><identifier name=\"foo\"/><function><identifier name=\"fn\"/><block></block><fn_type>normal</fn_type></function></namespace></tree>")
+  end
 
-    def initialize(tree, *tokens)
-      super
+  def test_nested_namespace
+    same("namespace foo { namespace bar {} }", "<tree><namespace><identifier name=\"foo\"/><namespace><identifier name=\"bar\"/></namespace></namespace></tree>")
+  end
 
-      if (@tokens.length == 4)
-        @body = [@tokens[1]] + @tokens[2]
-      elsif (@tokens.length == 3)
-        @body = @tokens[1]
-      else
-        @body = []
-      end
-
-      @children << :body
-    end
-
-    def each
-      @body.each{ |stmt| yield stmt }
-    end
+  def test_namespace_indent
+    same("foo::bob();", "<tree><call><lvalue><identifier name=\"foo::bob\"/></lvalue></call></tree>");
   end
 end

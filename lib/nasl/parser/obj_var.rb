@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2014, Tenable Network Security
+# Copyright (c) 2011-2018, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,27 +27,15 @@
 require 'nasl/parser/node'
 
 module Nasl
-  class Block < Node
-    attr_reader :body
-
-    include Enumerable
+  class ObjVar < Node
+    attr_reader :idents
 
     def initialize(tree, *tokens)
       super
 
-      if (@tokens.length == 4)
-        @body = [@tokens[1]] + @tokens[2]
-      elsif (@tokens.length == 3)
-        @body = @tokens[1]
-      else
-        @body = []
-      end
+      @idents = @tokens[1]
 
-      @children << :body
-    end
-
-    def each
-      @body.each{ |stmt| yield stmt }
+      @children << :idents
     end
   end
 end

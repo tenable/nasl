@@ -1,5 +1,5 @@
 ################################################################################
-# Copyright (c) 2011-2014, Tenable Network Security
+# Copyright (c) 2011-2018, Tenable Network Security
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,27 +27,29 @@
 require 'nasl/parser/node'
 
 module Nasl
-  class Block < Node
-    attr_reader :body
-
-    include Enumerable
+  class Case < Node
+    attr_reader :case_val, :case_op, :case_type
 
     def initialize(tree, *tokens)
       super
 
-      if (@tokens.length == 4)
-        @body = [@tokens[1]] + @tokens[2]
-      elsif (@tokens.length == 3)
-        @body = @tokens[1]
+      if @tokens.length == 3
+        @case_op = nil 
+        @case_val = @tokens[1]
+        @case_type = 'normal'
+      elsif @tokens.length == 6
+        @case_op = @tokens[2]
+        @case_val = @tokens[4]
+        @case_type = 'normal_with_op'
       else
-        @body = []
+        @case_op = nil 
+        @case_val = nil
+        @case_type = 'default'
       end
 
-      @children << :body
-    end
-
-    def each
-      @body.each{ |stmt| yield stmt }
+      @children << :case_val
+      @children << :case_op
+      @children << :case_type
     end
   end
 end
