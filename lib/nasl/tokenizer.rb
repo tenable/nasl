@@ -50,6 +50,7 @@ module Nasl
       'until'      => :UNTIL,
       'x'          => :REP,
       'while'      => :WHILE,
+      'do'         => :DO,
       'namespace'  => :NAMESPACE,
       'object'     => :OBJECT,
 #      'new'        => :NEW,
@@ -220,7 +221,8 @@ module Nasl
     def get_identifier
       # Identifiers are composed of letters, digits, and underscores.
       #ident = @line[/^[_a-z][_a-z0-9]*/i]
-      ident = @line[/^[_a-z]([_a-z0-9]*::[_a-z0-9]+)*[_a-z0-9]*/i]
+#      ident = @line[/^[_a-z]([_a-z0-9]*::[_a-z0-9]+)*[_a-z0-9]*/i]
+      ident = @line[/^(::|[_a-z])([_a-z0-9]*::[_a-z0-9]+)*[_a-z0-9]*/i]
       consume(ident.length)
 
       # Assume that we've got an identifier until proven otherwise.
@@ -371,7 +373,7 @@ module Nasl
       @mark = @point
 
       # Try to parse token at the point.
-      token = if @char =~ /[_a-z]/i
+      token = if @char =~ /[_a-z]/i or @line =~ /^::/
         get_identifier
       elsif @char =~ /['"]/
         get_string

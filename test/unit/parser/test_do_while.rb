@@ -24,47 +24,23 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ################################################################################
 
-require 'nasl/parser/node'
+class TestDoWhile < Test::Unit::TestCase
+  include Nasl::Test
 
-module Nasl
-  class Function < Node
-    attr_reader :body, :name, :params, :attribute, :fn_type
-
-    def initialize(tree, *tokens)
-      super
-
-      @body = @tokens.last
-
-      @fn_type = @tokens[1]
-
-      if @fn_type == "obj"
-        @name = @tokens[3]
-        @attribute = @tokens[0]
-        if @tokens.length == 8 
-          @params = @tokens[5]          
-        else
-          @params = []
-        end
-      else
-        @name = @tokens[2]
-        @attribute = []
-        if @tokens.length == 7
-          @params = @tokens[4]
-        else
-          @params = []
-        end
-      end
-
-      @children << :name
-      @children << :attribute
-      @children << :params
-      @children << :body
-      @children << :fn_type
-    end
-
-    def each
-      @body.each{ |stmt| yield stmt }
-    end
-
+  def test_each
+    tree = parse(
+      <<-EOF
+x = 0;
+do
+{
+  x ++;
+  display(x);
+}
+while (x < 10)
+      EOF
+    )
+    do_whiles = tree.all(:DoWhile)
+    assert_not_nil(tree)
+    assert_equal(1, do_whiles.length) 
   end
 end

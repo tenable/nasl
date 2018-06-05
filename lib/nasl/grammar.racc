@@ -168,6 +168,8 @@ rule
              { val[0] }
              | foreach
              { val[0] }
+             | do_while
+             { val[0] }
              | if
              { val[0] }
              | repeat
@@ -295,7 +297,7 @@ rule
              ;
 
   case_expr_list : case_expr
-                 { val[0] }
+                 { [val[0]] }
                  | case_expr COMMA case_expr_list
                  { [val[0]] + val[2] }
                  ;
@@ -314,6 +316,16 @@ rule
              { n(:Foreach, val[0], val[1], val[3], val[5]) }
              | FOREACH LPAREN ident IN expr RPAREN statement
              { n(:Foreach, val[0], val[2], val[4], val[6]) }
+             | FOREACH LPAREN VAR ident IN expr RPAREN statement
+             { n(:Foreach, val[0], val[3], val[5], val[7]) }
+             | FOR LPAREN VAR ident IN expr RPAREN statement
+             { n(:Foreach, val[0], val[3], val[5], val[7]) }
+             | FOR LPAREN ident IN expr RPAREN statement
+             { n(:Foreach, val[0], val[2], val[4], val[6]) }
+             ;
+
+  do_while   : DO statement WHILE LPAREN expr RPAREN
+             { n(:DoWhile, *val) }
              ;
 
   if         : IF LPAREN expr RPAREN statement
@@ -482,11 +494,11 @@ rule
              { val[0] } 
              ;
  
- 
   ident_ex   : ident
              { val[0] }
              | VAR 
              { val[0] }
+             ; 
 
   ##############################################################################
   # Named Components
@@ -532,6 +544,10 @@ rule
 
   ref        : AT_SIGN ident
              { n(:Reference, val[1]) }
+	     | FUNCTION LPAREN params RPAREN block
+	     { n(:FunctionReference, val[2], val[4]) }
+	     | FUNCTION LPAREN RPAREN block
+	     { n(:FunctionReference, val[3]) }
              ;
 
   ##############################################################################
@@ -582,6 +598,8 @@ rule
 
   list_elems : list_elem COMMA list_elems
              { [val[0]] + val[2] }
+             | list_elem COMMA
+             { [val[0]] }
              | list_elem
              { [val[0]] }
              ;
@@ -643,6 +661,16 @@ rule
              | REP
              { n(:Identifier, *val) }
              | IN
+             { n(:Identifier, *val) }
+             | OBJECT
+             { n(:Identifier, *val) }
+             | CONTINUE
+             { n(:Identifier, *val) }
+             | PUBLIC
+             { n(:Identifier, *val) }
+             | PRIVATE
+             { n(:Identifier, *val) }
+             | DEFAULT
              { n(:Identifier, *val) }
              ;
 
@@ -716,6 +744,8 @@ require 'nasl/parser/object'
 require 'nasl/parser/switch'
 require 'nasl/parser/case'
 require 'nasl/parser/obj_var'
+require 'nasl/parser/do_while'
+require 'nasl/parser/function_ref'
 
 ---- inner ----
 

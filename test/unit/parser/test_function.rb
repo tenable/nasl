@@ -30,7 +30,6 @@ class TestFunction < Test::Unit::TestCase
   def test_keyword_prefix
     # We never want to have a function with the same name as a keyword.
     fail_parse("function break() {}")
-    fail_parse("function continue() {}")
     fail_parse("function else() {}")
     fail_parse("function export() {}")
     fail_parse("function for() {}")

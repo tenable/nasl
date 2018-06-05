@@ -43,7 +43,8 @@ module Nasl
       case @type
       when *[:BREAK, :CONTINUE, :ELSE, :EXPORT, :FOR, :FOREACH, :FUNCTION,
             :GLOBAL, :IF, :IMPORT, :INCLUDE, :LOCAL, :REPEAT, :RETURN, :UNTIL,
-            :REP, :WHILE, :NAMESPACE, :OBJECT, :VAR, :PUBLIC, :PRIVATE, :CASE, :SWITCH, :DEFAULT]
+            :REP, :WHILE, :NAMESPACE, :OBJECT, :VAR, :PUBLIC, :PRIVATE, :CASE,
+            :SWITCH, :DEFAULT, :DO]
         "a keyword"
       when :UNDEF
         "an undefined constant"
