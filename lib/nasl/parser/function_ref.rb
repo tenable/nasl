@@ -27,44 +27,26 @@
 require 'nasl/parser/node'
 
 module Nasl
-  class Function < Node
-    attr_reader :body, :name, :params, :attribute, :fn_type
+  class FunctionReference < Node
+    attr_reader :body, :params
 
     def initialize(tree, *tokens)
       super
 
       @body = @tokens.last
 
-      @fn_type = @tokens[1]
-
-      if @fn_type == "obj"
-        @name = @tokens[3]
-        @attribute = @tokens[0]
-        if @tokens.length == 8 
-          @params = @tokens[5]          
-        else
-          @params = []
-        end
+      if @tokens.length == 5 
+        @params = @tokens[0]
       else
-        @name = @tokens[2]
-        @attribute = []
-        if @tokens.length == 7
-          @params = @tokens[4]
-        else
-          @params = []
-        end
+        @params = []
       end
 
-      @children << :name
-      @children << :attribute
       @children << :params
       @children << :body
-      @children << :fn_type
     end
 
     def each
       @body.each{ |stmt| yield stmt }
     end
-
   end
 end

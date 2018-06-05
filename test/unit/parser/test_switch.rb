@@ -62,20 +62,29 @@ switch (value2)
   default:
     rtrn = 1;
 }
+switch (value3)
+{
+  case ' ', '\n', '\t', '\r':
+    return TRUE;
+  default:
+    return FALSE;
+}
       EOF
     )
     assert_not_nil(tree)
   
     cases = tree.all(:Case)
     assert_not_nil(cases)
-    assert_equal(9, cases.length)
+    assert_equal(11, cases.length)
 
     assert_equal(cases[0].case_op, nil)
     assert_equal(cases[6].case_op.to_s, "=~")
 
-    assert_equal(cases[0].case_val.value, 0)
-    assert_equal(cases[4].case_val.text, "^cde.*")
+    assert_equal(cases[0].case_val[0].value, 0)
+    assert_equal(cases[4].case_val[0].text, "^cde.*")
+    assert_equal(cases[9].case_val[0].text, " ")
     assert_equal(cases[2].case_val, nil)
+    assert_equal(cases[9].case_val[2].text, "\t")
 
     assert_equal(cases[6].case_type, "normal_with_op")
     assert_equal(cases[0].case_type, "normal")
@@ -84,7 +93,7 @@ switch (value2)
 
     switches = tree.all(:Switch)
     assert_not_nil(switches)
-    assert_equal(3, switches.length)
+    assert_equal(4, switches.length)
 
     assert_equal(switches[1].switch_op.to_s, "=~")
     assert_equal(switches[0].switch_op, nil)
