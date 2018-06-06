@@ -34,16 +34,27 @@ module Nasl
       super
 
       @body = @tokens.last
-
       @fn_type = @tokens[1]
 
       if @fn_type == "obj"
-        @name = @tokens[3]
-        @attribute = @tokens[0]
         if @tokens.length == 8 
+          @name = @tokens[3]
+          @attribute = @tokens[0]
           @params = @tokens[5]          
-        else
+        elsif @tokens.length == 7
+          if @tokens[0].is_a?(Token) && @tokens[0].type == :FUNCTION
+            @attribute = nil
+            @params = @tokens[4]
+            @name = @tokens[2]
+          else
+            @name = @tokens[3]
+            @attribute = @tokens[0]
+            @params = []
+          end
+	elsif @tokens.length == 6
+          @attribute = nil
           @params = []
+          @name = @tokens[2]
         end
       else
         @name = @tokens[2]

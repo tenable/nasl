@@ -122,6 +122,10 @@ rule
                { n(:Function, val[0], 'obj', val[1], val[2], val[3], val[4], val[5], val[6]) }
                | obj_func_attr FUNCTION ident LPAREN RPAREN block
                { n(:Function, val[0], 'obj', val[1], val[2], val[3], val[4], val[5]) }
+               | FUNCTION ident LPAREN params RPAREN block
+               { n(:Function, val[0], 'obj', val[1], val[2], val[3], val[4], val[5]) }
+               | FUNCTION ident LPAREN RPAREN block
+               { n(:Function, val[0], 'obj', val[1], val[2], val[3], val[4]) }
                ;
 
   function   : FUNCTION ident LPAREN params RPAREN block
@@ -261,9 +265,7 @@ rule
              { n(:Return, *val) }
              ;
 
-  obj_func_attr : /* Empty */ 
-                { nil }
-                | PUBLIC 
+  obj_func_attr : PUBLIC 
                 { val[0] }
                 | PRIVATE
                 { val[0] }
