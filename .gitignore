@@ -3,6 +3,7 @@
 .bundle
 Gemfile.lock
 pkg/*
+vendor/
 
 # Generated files.
 *.rex.rb
@@ -12,3 +13,6 @@ pkg/*
 \#*\#
 *~
 *.bak
+
+# rbenv
+.ruby-version
